@@ -1,93 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fi">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuotteen tietojen vahvistus</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { 
+            color: #1d1d1f; 
+            font-size: 24px; 
+            margin-bottom: 20px; 
+        }
+        .kuva-laatikko {
+            width: 100%;
+            max-height: 350px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background: #eaeaea;
+            display: none; /* Piilotetaan ennen kuin linkki latautuu */
+        }
+        #tuotekuva {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="fi"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Tuotteen tietojen vahvistus&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f5f5f7;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 12px rgba(0,0,0,0.08);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>h1 {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #1d1d1f;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 24px;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.kuva-laatikko {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 350px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #eaeaea;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: none; /* Piilotetaan ennen kuin linkki latautuu */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#tuotekuva {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>object-fit: contain;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>iframe {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 700px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Tarkista tuotteen tiedot&lt;/h1&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="kuva-laatikko" id="kuvaWrapper"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;img id="tuotekuva" src="" alt="Tuotteen kuva"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;iframe id="tally-lomake" src="https://tally.so/embed/J9o9V4?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1"&gt;&lt;/iframe&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Luetaan linkistä tulleet tiedot (?tunnus=...&amp;nimi=... jne.)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const urlParams = new URLSearchParams(window.location.search);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const kuvaUrl = urlParams.get('kuva');</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Jos kuvalinkki löytyy, laitetaan se näkyviin</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (kuvaUrl) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tuotekuva').src = kuvaUrl;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('kuvaWrapper').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Syötetään kaikki tiedot lennosta myös Tally-lomakkeen sisään</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const iframe = document.getElementById('tally-lomake');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>iframe.src = "https://tally.so/embed/J9o9V4?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;" + urlParams.toString();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+    <div class="container">
+        <h1>Tarkista tuotteen tiedot</h1>
+        
+        <div class="kuva-laatikko" id="kuvaWrapper">
+            <img id="tuotekuva" src="" alt="Tuotteen kuva">
+        </div>
+
+        <iframe id="tally-lomake" src="https://tally.so/embed/J9o9V4?alignLeft=1&hideTitle=1&transparentBackground=1"></iframe>
+    </div>
+
+    <script>
+        // Luetaan linkistä tulleet tiedot (?tunnus=...&nimi=... jne.)
+        const urlParams = new URLSearchParams(window.location.search);
+        const kuvaUrl = urlParams.get('kuva');
+        
+        // Jos kuvalinkki löytyy, laitetaan se näkyviin
+        if (kuvaUrl) {
+            document.getElementById('tuotekuva').src = kuvaUrl;
+            document.getElementById('kuvaWrapper').style.display = 'block';
+        }
+
+        // Syötetään kaikki tiedot lennosta myös Tally-lomakkeen sisään
+        const iframe = document.getElementById('tally-lomake');
+        iframe.src = "https://tally.so/embed/J9o9V4?alignLeft=1&hideTitle=1&transparentBackground=1&" + urlParams.toString();
+    </script>
+
 </body>
 </html>
