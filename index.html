@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #f5f5f7;
         }
+
         .container {
             background: white;
             padding: 20px;
@@ -19,25 +20,58 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             text-align: center;
         }
-        h1 { 
-            color: #1d1d1f; 
-            font-size: 24px; 
-            margin-bottom: 20px; 
+
+        h1 {
+            color: #1d1d1f;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
+
+        /* UUSI: Joustava kuva-alue, jossa kuvat asettuvat siististi rinnakkain */
+        .kuva-galleria {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            scroll-snap-type: x mandatory;
+            justify-content: center; /* Keskittää kuvat jos niitä on vähän */
+        }
+
+        /* Nätti rullauspalkki puhelimille ja selaimille */
+        .kuva-galleria::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .kuva-galleria::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        /* Yksittäisen tuotekuvan laatikko */
         .kuva-laatikko {
-            width: 100%;
-            max-height: 350px;
+            flex: 0 0 calc(50% - 6px); /* Kaksi kuvaa mahtuu nätisti vierekkäin */
+            max-width: 250px;
+            height: 200px;
             overflow: hidden;
             border-radius: 12px;
-            margin-bottom: 20px;
             background: #eaeaea;
-            display: none;
+            border: 1px solid #e0e0e0;
+            scroll-snap-align: start;
         }
-        #tuotekuva {
+
+        .kuva-laatikko img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover; /* Täyttää ruudun siististi (vaihda 'contain' jos haluat nähdä koko kuvan rajoineen) */
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
+
+        .kuva-laatikko img:hover {
+            transform: scale(1.02);
+        }
+
         iframe {
             width: 100%;
             height: 700px;
@@ -50,22 +84,44 @@
     <div class="container">
         <h1>Tarkista tuotteen tiedot</h1>
         
-        <div class="kuva-laatikko" id="kuvaWrapper">
-            <img id="tuotekuva" src="" alt="Tuotteen kuva">
-        </div>
-
+        <div class="kuva-galleria" id="kuvaGalleria"></div>
+        
         <iframe id="tally-lomake" src="https://tally.so/embed/J9o9V4?alignLeft=1&hideTitle=1&transparentBackground=1"></iframe>
     </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const kuvaUrl = urlParams.get('kuva');
+        const kuvaParam = urlParams.get('kuva');
         
-        if (kuvaUrl) {
-            document.getElementById('tuotekuva').src = kuvaUrl;
-            document.getElementById('kuvaWrapper').style.display = 'block';
+        if (kuvaParam) {
+            const galleria = document.getElementById('kuvaGalleria');
+            
+            // Paloitellaan kuva-URLit pilkun kohdalta taulukoksi ja siivotaan tyhjät väliroskat pois
+            const kuvat = kuvaParam.split(',').map(url => url.trim()).filter(url => url !== '');
+            
+            kuvat.forEach((url, index) => {
+                // Luodaan HTML-rakenne jokaiselle kuvalle erikseen
+                const laatikko = document.createElement('div');
+                laatikko.className = 'kuva-laatikko';
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Tuotteen kuva ${index + 1}`;
+                
+                // Avaa kuva isona uuteen välilehteen kun sitä klikataan
+                img.onclick = () => window.open(url, '_blank');
+                
+                laatikko.appendChild(img);
+                galleria.appendChild(laatikko);
+            });
+            
+            // Jos kuvia on paljon, muutetaan asettelu alkamaan vasemmasta reunasta rullausta varten
+            if (kuvat.length > 2) {
+                galleria.style.justifyContent = 'flex-start';
+            }
         }
-
+        
+        // Esitäytetään Tally-lomake kaikilla URL-parametreilla
         const iframe = document.getElementById('tally-lomake');
         iframe.src = "https://tally.so/embed/J9o9V4?alignLeft=1&hideTitle=1&transparentBackground=1&" + urlParams.toString();
     </script>
