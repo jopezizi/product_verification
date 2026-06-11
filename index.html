@@ -122,18 +122,25 @@
     document.querySelector('.container').appendChild(confirmationPanel);
 
     function sendToWebhook(formData) {
-        // Muutetaan FormData -> URLSearchParams, jotta Make lukee sen oikein
-        const params = new URLSearchParams();
-        for (const pair of formData.entries()) {
-            params.append(pair[0], pair[1]);
-        }
-        
-        return fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: params
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", webhookUrl, true);
+            // Lähetetään form-urlencoded muodossa, joka on webhookeille helpoin
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) resolve();
+                    else reject('Status: ' + xhr.status);
+                }
+            };
+
+            // Muutetaan FormData -> URL-parametrien tyyliseksi merkkijonoksi
+            const params = new URLSearchParams();
+            for (const pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            xhr.send(params.toString());
         });
     }
 
