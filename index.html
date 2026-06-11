@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuotteen tietojen vahvistus</title>
+    <title>Tuotteen vahvistus</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f7; }
-        .container { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        h1 { font-size: 20px; margin-bottom: 20px; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .readonly { background: #f0f0f0; color: #555; border: 1px solid #ddd; }
-        button { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
-        
-        /* Gallerian tyylit */
-        .kuva-galleria { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; justify-content: center; }
-        .kuva-laatikko { flex: 0 0 180px; height: 180px; border-radius: 12px; overflow: hidden; background: #eee; cursor: pointer; border: 2px solid #ddd; }
+        /* Tally-tyyliset fontit ja värit */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif; 
+            max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #fafafa; color: #1f2937;
+        }
+        .container { background: white; padding: 40px; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 30px; }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 15px; color: #4b5563; }
+        input, textarea, select { 
+            width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; transition: border 0.2s;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .readonly { background: #f9fafb; color: #6b7280; border: 1px solid #e5e7eb; }
+        button { 
+            width: 100%; padding: 14px; background: #000; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px;
+        }
+        .kuva-galleria { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 30px; }
+        .kuva-laatikko { flex: 0 0 140px; height: 140px; border-radius: 12px; overflow: hidden; background: #f3f4f6; cursor: pointer; }
         .kuva-laatikko img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
@@ -26,20 +33,15 @@
     <h1>Tuotteen tietojen vahvistus</h1>
     <div class="kuva-galleria" id="kuvaGalleria"></div>
     
-    <form id="vahvistusForm" action="https://hook.eu1.make.com/4p9kp4pbd9k8rsrleukgcdvkbmlj386g" method="POST">
+    <form id="vahvistusForm" action="LISÄÄ_TÄHÄN_MAKE_WEBHOOK_URL" method="POST">
         <input type="hidden" name="token" value="MinunSalainenAvain123">
         
         <div class="form-group"><label>Tunnus</label><input type="text" name="tunnus" id="tunnus" readonly class="readonly"></div>
         <div class="form-group"><label>Nimi</label><input type="text" name="nimi" id="nimi"></div>
         <div class="form-group"><label>Tuotemerkki</label><input type="text" name="tuotemerkki" id="tuotemerkki"></div>
         <div class="form-group"><label>Kuvaus</label><textarea name="kuvaus" id="kuvaus" rows="3"></textarea></div>
-        
         <div class="form-group"><label>Hinta (€)</label><input type="number" name="hinta" id="hinta" step="0.01"></div>
-        
-        <div class="form-group"><label>Perustelu hintaehdotukselle</label>
-            <textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea>
-        </div>
-        
+        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
         <div class="form-group"><label>Kunto</label>
             <select name="kunto" id="kunto">
                 <option value="Erinomainen">Erinomainen</option>
@@ -55,12 +57,20 @@
 </div>
 
 <script>
+    // Haetaan URL-parametrit
     const urlParams = new URLSearchParams(window.location.search);
-    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
+    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
     
-    // Täytetään kentät
+    // Täytetään kentät URL-parametreilla
     fields.forEach(f => {
-        if(urlParams.get(f)) document.getElementById(f).value = urlParams.get(f);
+        if(urlParams.get(f)) {
+            const el = document.getElementById(f);
+            if(f === 'hinta') {
+                el.value = parseFloat(urlParams.get(f)).toFixed(2);
+            } else {
+                el.value = urlParams.get(f);
+            }
+        }
     });
 
     // Kuvagalleria
@@ -70,42 +80,26 @@
         kuvaParam.split(',').forEach(url => {
             const div = document.createElement('div');
             div.className = 'kuva-laatikko';
-            div.innerHTML = `<img src="${url.trim()}" onclick="window.open('${url.trim()}', '_blank')">`;
+            div.innerHTML = `<img src="${url.trim()}">`;
             galleria.appendChild(div);
         });
     }
 
+    // AJAX-lähetys
     const form = document.getElementById('vahvistusForm');
     form.addEventListener('submit', function(e) {
-        e.preventDefault(); // Estää selaimen peruslähetyksen
-        
-        const btn = form.querySelector('button');
-        btn.innerText = "Lähetetään...";
-        btn.disabled = true;
-
-        fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form)
-        })
+        e.preventDefault();
+        fetch(form.action, { method: 'POST', body: new FormData(form) })
         .then(() => {
-            // Näytetään kiitosviesti ja kaksi nappia
             document.querySelector('.container').innerHTML = `
-                <h1 style="color: green; margin-bottom: 20px;">✅ Tiedot lähetetty!</h1>
-                <p style="text-align: center; margin-bottom: 30px;">Tiedot on vastaanotettu ja ne odottavat käsittelyä.</p>
-                
+                <h1 style="text-align:center;">✅ Tiedot lähetetty!</h1>
                 <div style="display: flex; gap: 10px; flex-direction: column;">
-                    <button onclick="window.location.reload()" style="background-color: #6c757d;">Palaa tekemään muutoksia</button>
-                    <button onclick="window.close()" style="background-color: #dc3545;">Sulje sivu</button>
+                    <button onclick="history.back()" style="background:#f3f4f6; color:#000;">Palaa takaisin</button>
+                    <button onclick="window.close()" style="background:#dc2626;">Sulje sivu</button>
                 </div>
             `;
-        })
-        .catch(() => {
-            alert('Virhe lähetyksessä. Kokeile uudelleen.');
-            btn.innerText = "Lähetä vahvistus";
-            btn.disabled = false;
         });
     });
 </script>
-
 </body>
 </html>
