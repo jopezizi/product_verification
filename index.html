@@ -35,9 +35,6 @@
         
         <div class="form-group"><label>Kuvaus</label><textarea name="kuvaus" id="kuvaus" rows="5"></textarea></div>
         
-        <div class="form-group"><label>Hinta (€)</label><input type="number" name="hinta" id="hinta" step="0.01"></div>
-        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
-        
         <div class="form-group"><label>Kunto</label>
             <select name="kunto" id="kunto" required>
                 <option value="">Valitse kunto...</option>
@@ -45,7 +42,11 @@
                 <option value="Hyvä">Hyvä</option>
                 <option value="Tyydyttävä">Tyydyttävä</option>
             </select>
+            <div style="font-size: 12px; color: #6b7280; margin-top: 6px; font-weight: normal;">Hinta muuttuu valitun kunnon perusteella</div>
         </div>
+        
+        <div class="form-group"><label>Hinta (€)</label><input type="number" name="hinta" id="hinta" step="0.01"></div>
+        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
         
         <div class="form-group"><label>Pääryhmä</label><input type="text" name="paaryhma" id="paaryhma"></div>
         <div class="form-group"><label>Ryhmä</label><input type="text" name="ryhma" id="ryhma"></div>
@@ -106,12 +107,16 @@
         return 1.00;
     }
 
+    function roundToNearestHalf(value) {
+        return Math.round(value * 2) / 2;
+    }
+
     // Update displayed price when kunto changes
     kuntoSelect.addEventListener('change', () => {
         const val = kuntoSelect.value;
         if(basePrice == null) basePrice = parseFloat(hintaEl.value) || 0;
         const multi = kuntoMultiplier(val);
-        hintaEl.value = (basePrice * multi).toFixed(2);
+        hintaEl.value = roundToNearestHalf(basePrice * multi).toFixed(2);
     });
 
     // Confirmation panel (hidden until submit)
