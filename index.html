@@ -58,18 +58,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
     
-    // Täytetään tavalliset kentät
+    // Täytetään kentät
     fields.forEach(f => {
         if(urlParams.get(f)) document.getElementById(f).value = urlParams.get(f);
     });
 
-    // Erillinen täyttö hinnalle (varmistaa 4.00-muodon)
-    const hintaParam = urlParams.get('hinta');
-    if (hintaParam) {
-        document.getElementById('hinta').value = parseFloat(hintaParam).toFixed(2);
-    }
-
-    // Luodaan kuvagalleria
+    // Kuvagalleria
     const kuvaParam = urlParams.get('kuva');
     if (kuvaParam) {
         const galleria = document.getElementById('kuvaGalleria');
@@ -80,6 +74,33 @@
             galleria.appendChild(div);
         });
     }
+
+    const form = document.getElementById('vahvistusForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Estää selaimen peruslähetyksen
+        
+        const btn = form.querySelector('button');
+        btn.innerText = "Lähetetään...";
+        btn.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(() => {
+            // Näytetään kiitosviesti lomakkeen tilalla
+            document.querySelector('.container').innerHTML = `
+                <h1 style="color: green;">✅ Tiedot lähetetty!</h1>
+                <p style="text-align: center;">Tiedot on vastaanotettu ja ne odottavat käsittelyä.</p>
+                <button onclick="window.location.reload()">Päivitä sivu</button>
+            `;
+        })
+        .catch(() => {
+            alert('Virhe lähetyksessä. Kokeile uudelleen.');
+            btn.innerText = "Lähetä vahvistus";
+            btn.disabled = false;
+        });
+    });
 </script>
 
 </body>
