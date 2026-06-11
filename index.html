@@ -38,7 +38,22 @@
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    // ... täyttölogiikka ...
+    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
+    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
+
+    // Täytetään kentät
+    // Täytetään kentät URL-parametreilla
+    fields.forEach(f => {
+        if(urlParams.get(f)) document.getElementById(f).value = urlParams.get(f);
+        if(urlParams.get(f)) {
+            const el = document.getElementById(f);
+            if(f === 'hinta') {
+                el.value = parseFloat(urlParams.get(f)).toFixed(2);
+            } else {
+                el.value = urlParams.get(f);
+            }
+        }
+    });
 
     // Korjattu kuvagalleria: Pakotettu target="_blank"
     const kuvaParam = urlParams.get('kuva');
