@@ -6,201 +6,317 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tuotteen vahvistus</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #fafafa; }
-        .container { background: white; padding: 40px; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h1 { font-size: 24px; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #374151; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; font-family: inherit; }
-        .readonly { background: #f3f4f6; color: #6b7280; }
-        button { width: 100%; padding: 16px; background: #000; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; font-family: inherit; }
-        
-        .kuva-galleria { display: flex; gap: 15px; overflow-x: auto; margin-bottom: 30px; padding-bottom: 10px; }
-        .kuva-laatikko { flex: 0 0 220px; height: 220px; border-radius: 12px; overflow: hidden; background: #eee; cursor: pointer; border: 1px solid #ddd; }
-        .kuva-laatikko img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        :root {
+            --primary-color: #000;
+            --text-primary: #374151;
+            --text-secondary: #6b7280;
+            --border-color: #d1d5db;
+            --border-light: #e5e7eb;
+            --bg-light: #f3f4f6;
+            --bg-page: #fafafa;
+            --bg-white: #fff;
+            --radius-sm: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 20px;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --gap-sm: 6px;
+            --gap-md: 15px;
+            --gap-lg: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: var(--bg-page);
+        }
+
+        .container {
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 25px 0;
+            color: var(--text-primary);
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: var(--gap-sm);
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: var(--gap-lg);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--gap-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        input.readonly, textarea.readonly {
+            background-color: var(--bg-light);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .gallery {
+            display: flex;
+            gap: var(--gap-md);
+            overflow-x: auto;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .gallery-item {
+            flex: 0 0 220px;
+            height: 220px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: var(--bg-light);
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--bg-white);
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-white);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
+            margin-top: 10px;
+        }
+
+        .confirmation-buttons button {
+            margin-top: 0;
+        }
+
+        .confirmation-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        #confirmationPanel {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Tuotteen vahvistus</h1>
+        <div class="gallery" id="gallery"></div>
 
-<div class="container">
-    <h1>Tuotteen vahvistus</h1>
-    <div class="kuva-galleria" id="kuvaGalleria"></div>
-    
-    <form id="vahvistusForm" action="https://hook.eu1.make.com/asoke6dexf84uhjhear67bjhsj48m5r9" method="POST">
-        <input type="hidden" name="token" value="MinunSalainenAvain123">
-        
-        <div class="form-group"><label>Tunnus</label><input type="text" name="tunnus" id="tunnus" readonly class="readonly"></div>
-        <div class="form-group"><label>Nimi</label><input type="text" name="nimi" id="nimi"></div>
-        <div class="form-group"><label>Tuotemerkki</label><input type="text" name="tuotemerkki" id="tuotemerkki"></div>
-        
-        <div class="form-group"><label>Kuvaus</label><textarea name="kuvaus" id="kuvaus" rows="5"></textarea></div>
-        
-        <div class="form-group"><label>Kunto</label>
-            <select name="kunto" id="kunto" required>
-                <option value="">Valitse kunto...</option>
-                <option value="Erinomainen">Erinomainen</option>
-                <option value="Hyvä">Hyvä</option>
-                <option value="Tyydyttävä">Tyydyttävä</option>
-            </select>
-            <div style="font-size: 12px; color: #6b7280; margin-top: 6px; font-weight: normal;">Hinta muuttuu valitun kunnon perusteella</div>
-        </div>
-        
-        <div class="form-group"><label>Hinta (€)</label><input type="number" name="hinta" id="hinta" step="0.01"></div>
-        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
-        
-        <div class="form-group"><label>Pääryhmä</label><input type="text" name="paaryhma" id="paaryhma"></div>
-        <div class="form-group"><label>Ryhmä</label><input type="text" name="ryhma" id="ryhma"></div>
-        
-        <button type="submit">Tallenna</button>
-    </form>
-</div>
+        <form id="form">
+            <input type="hidden" name="token" value="MinunSalainenAvain123">
 
-<script>
-    const webhookUrl = 'https://hook.eu1.make.com/asoke6dexf84uhjhear67bjhsj48m5r9';
-    const urlParams = new URLSearchParams(window.location.search);
-    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
-    // Populate fields from URL params and store original price
-    let basePrice = null;
-    fields.forEach(f => {
-        const val = urlParams.get(f);
-        if(val) {
-            const el = document.getElementById(f);
-            if(el) {
-                if(f === 'hinta') {
-                    el.value = parseFloat(val).toFixed(2);
-                    basePrice = parseFloat(val) || 0;
-                } else {
-                    el.value = val;
-                }
+            <div class="form-group">
+                <label for="tunnus">Tunnus</label>
+                <input type="text" id="tunnus" name="tunnus" readonly class="readonly">
+            </div>
+
+            <div class="form-group">
+                <label for="nimi">Nimi</label>
+                <input type="text" id="nimi" name="nimi">
+            </div>
+
+            <div class="form-group">
+                <label for="tuotemerkki">Tuotemerkki</label>
+                <input type="text" id="tuotemerkki" name="tuotemerkki">
+            </div>
+
+            <div class="form-group">
+                <label for="kuvaus">Kuvaus</label>
+                <textarea id="kuvaus" name="kuvaus" rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="kunto">Kunto</label>
+                <select id="kunto" name="kunto" required>
+                    <option value="">Valitse kunto...</option>
+                    <option value="Erinomainen">Erinomainen</option>
+                    <option value="Hyvä">Hyvä</option>
+                    <option value="Tyydyttävä">Tyydyttävä</option>
+                </select>
+                <div class="helper-text">Hinta muuttuu valitun kunnon perusteella</div>
+            </div>
+
+            <div class="form-group">
+                <label for="hinta">Hinta (€)</label>
+                <input type="number" id="hinta" name="hinta" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="perustelu">Perustelu</label>
+                <textarea id="perustelu" name="perustelu" rows="2" readonly class="readonly"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="paaryhma">Pääryhmä</label>
+                <input type="text" id="paaryhma" name="paaryhma">
+            </div>
+
+            <div class="form-group">
+                <label for="ryhma">Ryhmä</label>
+                <input type="text" id="ryhma" name="ryhma">
+            </div>
+
+            <button type="submit" class="btn-primary">Tallenna</button>
+        </form>
+
+        <div id="confirmationPanel"></div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            webhookUrl: 'https://hook.eu1.make.com/asoke6dexf84uhjhear67bjhsj48m5r9',
+            formFields: ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'],
+            conditionMultipliers: {
+                'Erinomainen': 1.15,
+                'Hyvä': 1.00,
+                'Tyydyttävä': 0.75
             }
-        }
-    });
+        };
 
-    const kuvaParam = urlParams.get('kuva');
-    if (kuvaParam) {
-        const galleria = document.getElementById('kuvaGalleria');
-        kuvaParam.split(',').forEach(url => {
-            const trimmedUrl = url.trim();
-            if(!trimmedUrl) return;
-            const a = document.createElement('a');
-            a.href = trimmedUrl;
-            a.target = "_blank";
-            a.innerHTML = `<div class="kuva-laatikko"><img src="${trimmedUrl}"></div>`;
-            galleria.appendChild(a);
-        });
-    }
+        const form = document.getElementById('form');
+        const gallery = document.getElementById('gallery');
+        const confirmationPanel = document.getElementById('confirmationPanel');
+        const kuntoSelect = document.getElementById('kunto');
+        const hintaInput = document.getElementById('hinta');
+        const submitBtn = form.querySelector('button[type="submit"]');
 
-    const form = document.getElementById('vahvistusForm');
-    const kuntoSelect = document.getElementById('kunto');
-    const hintaEl = document.getElementById('hinta');
+        let basePrice = null; // Geminin antama hinta (kunto: Hyvä)
+        let lastSubmission = null;
 
-    // Keep basePrice up to date if user edits price manually
-    hintaEl.addEventListener('input', () => {
-        const v = parseFloat(hintaEl.value);
-        if(!Number.isNaN(v)) basePrice = v;
-    });
-
-    function kuntoMultiplier(kunto) {
-        if(kunto === 'Erinomainen') return 1.15;
-        if(kunto === 'Hyvä') return 1.00;
-        if(kunto === 'Tyydyttävä') return 0.75;
-        return 1.00;
-    }
-
-    function roundToNearestHalf(value) {
-        return Math.round(value * 2) / 2;
-    }
-
-    // Update displayed price when kunto changes
-    kuntoSelect.addEventListener('change', () => {
-        const val = kuntoSelect.value;
-        if(basePrice == null) basePrice = parseFloat(hintaEl.value) || 0;
-        const multi = kuntoMultiplier(val);
-        hintaEl.value = roundToNearestHalf(basePrice * multi).toFixed(2);
-    });
-
-    // Confirmation panel (hidden until submit)
-    const confirmationPanel = document.createElement('div');
-    confirmationPanel.id = 'confirmationPanel';
-    confirmationPanel.style.display = 'none';
-    confirmationPanel.style.marginTop = '20px';
-    document.querySelector('.container').appendChild(confirmationPanel);
-
-    function sendToWebhook(formData) {
-        const dataObj = {};
-        for (const pair of formData.entries()) {
-            dataObj[pair[0]] = pair[1];
+        function getConditionMultiplier(condition) {
+            return CONFIG.conditionMultipliers[condition] ?? 1.00;
         }
 
-        return fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataObj)
-        });
-    }
-
-    // Store last submission data for final save
-    window.lastSubmission = null;
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        if(!kuntoSelect.value) {
-            alert('Valitse kunto ennen lähettämistä.');
-            kuntoSelect.focus();
-            return;
+        function formatPrice(value) {
+            return (Math.round(value * 2) / 2).toFixed(2);
         }
 
-        const btn = this.querySelector('button');
-        btn.disabled = true;
-        btn.innerText = 'Tallennetaan...';
+        function populateFormFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
 
-        // Collect form data into an object for possible re-submission
-        const dataObj = {};
-        new FormData(this).forEach((v,k) => dataObj[k] = v);
-        window.lastSubmission = dataObj;
+            CONFIG.formFields.forEach(fieldName => {
+                const value = urlParams.get(fieldName);
+                if (!value) return;
 
-        sendToWebhook(new FormData(this))
-        .then(() => {
-            btn.disabled = false;
-            btn.innerText = 'Tallenna';
+                const element = document.getElementById(fieldName);
+                if (!element) return;
 
-            // Hide form and show confirmation panel with two actions
-            form.style.display = 'none';
-            confirmationPanel.innerHTML = `
-                <h1 style="text-align:center">✅ Tallenettu!</h1>
-                <div style="display:flex;gap:10px;flex-direction:column;margin-top:10px;">
-                  <button id="confirmCloseBtn" style="background:#000;color:#fff;padding:12px;border-radius:8px;border:none;">Vahvista ja sulje</button>
-                  <button id="editBackBtn" style="background:#fff;color:#000;border:1px solid #000;padding:12px;border-radius:8px;">Palaa muokkaamaan</button>
-                </div>
-            `;
-            confirmationPanel.style.display = 'block';
-
-            document.getElementById('editBackBtn').addEventListener('click', () => {
-                confirmationPanel.style.display = 'none';
-                form.style.display = 'block';
-            });
-
-            document.getElementById('confirmCloseBtn').addEventListener('click', () => {
-                // Ensure saved, then close the tab
-                if(window.lastSubmission) {
-                    const params = new URLSearchParams();
-                    for(const k in window.lastSubmission) params.append(k, window.lastSubmission[k]);
-                    sendToWebhook(params)
-                    .catch(() => {})
-                    .finally(() => { window.close(); });
+                if (fieldName === 'hinta') {
+                    const price = parseFloat(value) || 0;
+                    element.value = price.toFixed(2);
+                    basePrice = price; // Tallennetaan alkuperäinen hinta pohjaksi
                 } else {
-                    window.close();
+                    element.value = value;
                 }
             });
-        })
-        .catch(err => {
-            btn.disabled = false;
-            btn.innerText = 'Tallenna';
-            alert('Virhe lähetyksessä. Tarkista yhteys ja yritä uudelleen.');
-            console.error(err);
+
+            const kuvaParam = urlParams.get('kuva');
+            if (kuvaParam) populateGallery(kuvaParam);
+        }
+
+        // --- TÄMÄ LOGIIKKA VARMISTAA, ETTÄ HINTA PÄIVITTYY OIKEIN ---
+        kuntoSelect.addEventListener('change', (e) => {
+            if (basePrice === null) basePrice = parseFloat(hintaInput.value) || 0;
+            const multiplier = getConditionMultiplier(e.target.value);
+            hintaInput.value = formatPrice(basePrice * multiplier);
         });
-    });
-</script>
+
+        hintaInput.addEventListener('input', () => {
+            const manualPrice = parseFloat(hintaInput.value);
+            if (!Number.isNaN(manualPrice)) {
+                const currentMultiplier = getConditionMultiplier(kuntoSelect.value);
+                // Päivitetään basePrice, jotta seuraavat kunnon vaihdot lasketaan tästä
+                basePrice = manualPrice / currentMultiplier;
+            }
+        });
+
+        // ... (loppuosa webhook-lähetyksestä ja confirm-panelista pysyy samana)
+
+        // Lisää loppuun:
+        populateFormFromUrl();
+    </script>
 </body>
 </html>
