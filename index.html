@@ -27,7 +27,6 @@
             margin-bottom: 20px;
         }
 
-        /* UUSI: Joustava kuva-alue, jossa kuvat asettuvat siististi rinnakkain */
         .kuva-galleria {
             display: flex;
             gap: 12px;
@@ -35,10 +34,9 @@
             padding-bottom: 12px;
             margin-bottom: 20px;
             scroll-snap-type: x mandatory;
-            justify-content: center; /* Keskittää kuvat jos niitä on vähän */
+            justify-content: center;
         }
 
-        /* Nätti rullauspalkki puhelimille ja selaimille */
         .kuva-galleria::-webkit-scrollbar {
             height: 6px;
         }
@@ -48,9 +46,8 @@
             border-radius: 10px;
         }
 
-        /* Yksittäisen tuotekuvan laatikko */
         .kuva-laatikko {
-            flex: 0 0 calc(50% - 6px); /* Kaksi kuvaa mahtuu nätisti vierekkäin */
+            flex: 0 0 calc(50% - 6px);
             max-width: 250px;
             height: 200px;
             overflow: hidden;
@@ -63,7 +60,7 @@
         .kuva-laatikko img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Täyttää ruudun siististi (vaihda 'contain' jos haluat nähdä koko kuvan rajoineen) */
+            object-fit: cover;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -86,6 +83,7 @@
         
         <div class="kuva-galleria" id="kuvaGalleria"></div>
         
+        <!-- Päivitetty Tally-osoite -->
         <iframe id="tally-lomake" src="https://tally.so/embed/gDObyN?alignLeft=1&hideTitle=1&transparentBackground=1"></iframe>
     </div>
 
@@ -95,35 +93,29 @@
         
         if (kuvaParam) {
             const galleria = document.getElementById('kuvaGalleria');
-            
-            // Paloitellaan kuva-URLit pilkun kohdalta taulukoksi ja siivotaan tyhjät väliroskat pois
             const kuvat = kuvaParam.split(',').map(url => url.trim()).filter(url => url !== '');
             
             kuvat.forEach((url, index) => {
-                // Luodaan HTML-rakenne jokaiselle kuvalle erikseen
                 const laatikko = document.createElement('div');
                 laatikko.className = 'kuva-laatikko';
                 
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Tuotteen kuva ${index + 1}`;
-                
-                // Avaa kuva isona uuteen välilehteen kun sitä klikataan
                 img.onclick = () => window.open(url, '_blank');
                 
                 laatikko.appendChild(img);
                 galleria.appendChild(laatikko);
             });
             
-            // Jos kuvia on paljon, muutetaan asettelu alkamaan vasemmasta reunasta rullausta varten
             if (kuvat.length > 2) {
                 galleria.style.justifyContent = 'flex-start';
             }
         }
         
-        // Esitäytetään Tally-lomake kaikilla URL-parametreilla
+        // Esitäytetään uusi Tally-lomake kaikilla URL-parametreilla
         const iframe = document.getElementById('tally-lomake');
-        iframe.src = "https://tally.so/embed/J9o9V4?alignLeft=1&hideTitle=1&transparentBackground=1&" + urlParams.toString();
+        iframe.src = "https://tally.so/embed/gDObyN?alignLeft=1&hideTitle=1&transparentBackground=1&" + urlParams.toString();
     </script>
 
 </body>
