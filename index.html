@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tuotteen vahvistus</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #fafafa; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #fafafa; }
         .container { background: white; padding: 40px; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         h1 { font-size: 24px; margin-bottom: 25px; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #374151; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; font-family: inherit; }
         .readonly { background: #f3f4f6; color: #6b7280; }
-        button { width: 100%; padding: 16px; background: #000; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button { width: 100%; padding: 16px; background: #000; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; font-family: inherit; }
         
         .kuva-galleria { display: flex; gap: 15px; overflow-x: auto; margin-bottom: 30px; padding-bottom: 10px; }
         .kuva-laatikko { flex: 0 0 220px; height: 220px; border-radius: 12px; overflow: hidden; background: #eee; cursor: pointer; border: 1px solid #ddd; }
@@ -39,7 +39,7 @@
         <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
         
         <div class="form-group"><label>Kunto</label>
-            <select name="kunto" id="kunto">
+            <select name="kunto" id="kunto" required>
                 <option value="">Valitse kunto...</option>
                 <option value="Erinomainen">Erinomainen</option>
                 <option value="Hyvä">Hyvä</option>
@@ -50,14 +50,15 @@
         <div class="form-group"><label>Pääryhmä</label><input type="text" name="paaryhma" id="paaryhma"></div>
         <div class="form-group"><label>Ryhmä</label><input type="text" name="ryhma" id="ryhma"></div>
         
-        <button type="submit">Lähetä vahvistus</button>
+        <button type="submit">Tallenna</button>
     </form>
 </div>
 
-<script>
+    <script>
     const urlParams = new URLSearchParams(window.location.search);
     const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
-
+    // Populate fields from URL params and store original price
+    let basePrice = null;
     fields.forEach(f => {
         const val = urlParams.get(f);
         if(val) {
@@ -65,6 +66,7 @@
             if(el) {
                 if(f === 'hinta') {
                     el.value = parseFloat(val).toFixed(2);
+                    basePrice = parseFloat(val) || 0;
                 } else {
                     el.value = val;
                 }
@@ -86,18 +88,98 @@
         });
     }
 
-    document.getElementById('vahvistusForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('vahvistusForm');
+    const kuntoSelect = document.getElementById('kunto');
+    const hintaEl = document.getElementById('hinta');
+
+    // Keep basePrice up to date if user edits price manually
+    hintaEl.addEventListener('input', () => {
+        const v = parseFloat(hintaEl.value);
+        if(!Number.isNaN(v)) basePrice = v;
+    });
+
+    function kuntoMultiplier(kunto) {
+        if(kunto === 'Erinomainen') return 1.15;
+        if(kunto === 'Hyvä') return 1.00;
+        if(kunto === 'Tyydyttävä') return 0.75;
+        return 1.00;
+    }
+
+    // Update displayed price when kunto changes
+    kuntoSelect.addEventListener('change', () => {
+        const val = kuntoSelect.value;
+        if(basePrice == null) basePrice = parseFloat(hintaEl.value) || 0;
+        const multi = kuntoMultiplier(val);
+        hintaEl.value = (basePrice * multi).toFixed(2);
+    });
+
+    // Confirmation panel (hidden until submit)
+    const confirmationPanel = document.createElement('div');
+    confirmationPanel.id = 'confirmationPanel';
+    confirmationPanel.style.display = 'none';
+    confirmationPanel.style.marginTop = '20px';
+    document.querySelector('.container').appendChild(confirmationPanel);
+
+    // Store last submission data for final save
+    window.lastSubmission = null;
+
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        if(!kuntoSelect.value) {
+            alert('Valitse kunto ennen lähettämistä.');
+            kuntoSelect.focus();
+            return;
+        }
+
         const btn = this.querySelector('button');
-        btn.innerText = "Lähetetään...";
-        
+        btn.disabled = true;
+        btn.innerText = 'Tallennetaan...';
+
+        // Collect form data into an object for possible re-submission
+        const dataObj = {};
+        new FormData(this).forEach((v,k) => dataObj[k] = v);
+        window.lastSubmission = dataObj;
+
         fetch(this.action, { method: 'POST', body: new FormData(this) })
         .then(() => {
-            document.querySelector('.container').innerHTML = `
-                <h1 style="text-align:center">✅ Lähetetty!</h1>
-                <button onclick="window.close()" style="background:#000;">Sulje välilehti</button>
-                <button onclick="window.location.href='https://docs.google.com/spreadsheets/d/LISÄÄ_ID'" style="background:#fff; color:#000; border:1px solid #000; margin-top:10px;">Palaa listaan</button>
+            btn.disabled = false;
+            btn.innerText = 'Tallenna';
+
+            // Hide form and show confirmation panel with two actions
+            form.style.display = 'none';
+            confirmationPanel.innerHTML = `
+                <h1 style="text-align:center">✅ Tallenettu!</h1>
+                <div style="display:flex;gap:10px;flex-direction:column;margin-top:10px;">
+                  <button id="confirmCloseBtn" style="background:#000;color:#fff;padding:12px;border-radius:8px;border:none;">Vahvista ja sulje</button>
+                  <button id="editBackBtn" style="background:#fff;color:#000;border:1px solid #000;padding:12px;border-radius:8px;">Palaa muokkaamaan</button>
+                </div>
             `;
+            confirmationPanel.style.display = 'block';
+
+            document.getElementById('editBackBtn').addEventListener('click', () => {
+                confirmationPanel.style.display = 'none';
+                form.style.display = 'block';
+            });
+
+            document.getElementById('confirmCloseBtn').addEventListener('click', () => {
+                // Ensure saved, then close the tab
+                if(window.lastSubmission) {
+                    const params = new URLSearchParams();
+                    for(const k in window.lastSubmission) params.append(k, window.lastSubmission[k]);
+                    fetch(form.action, { method: 'POST', body: params })
+                    .catch(() => {})
+                    .finally(() => { window.close(); });
+                } else {
+                    window.close();
+                }
+            });
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerText = 'Tallenna';
+            alert('Virhe lähetyksessä. Tarkista yhteys ja yritä uudelleen.');
+            console.error(err);
         });
     });
 </script>
