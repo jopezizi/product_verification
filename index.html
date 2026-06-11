@@ -5,118 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tuotteen tietojen vahvistus</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f7;
-        }
-
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        h1 {
-            color: #1d1d1f;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .kuva-galleria {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            scroll-snap-type: x mandatory;
-            justify-content: center;
-        }
-
-        .kuva-galleria::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .kuva-galleria::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 10px;
-        }
-
-        .kuva-laatikko {
-            flex: 0 0 calc(50% - 6px);
-            max-width: 250px;
-            height: 200px;
-            overflow: hidden;
-            border-radius: 12px;
-            background: #eaeaea;
-            border: 1px solid #e0e0e0;
-            scroll-snap-align: start;
-        }
-
-        .kuva-laatikko img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .kuva-laatikko img:hover {
-            transform: scale(1.02);
-        }
-
-        iframe {
-            width: 100%;
-            height: 700px;
-            border: none;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f7; }
+        .container { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        h1 { font-size: 20px; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .kuva-galleria { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 20px; justify-content: center; }
+        .kuva-laatikko { flex: 0 0 100px; height: 100px; border-radius: 8px; overflow: hidden; }
+        .kuva-laatikko img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Tarkista tuotteen tiedot</h1>
+<div class="container">
+    <h1>Vahvista tuotteen tiedot</h1>
+    <div class="kuva-galleria" id="kuvaGalleria"></div>
+    
+    <form id="vahvistusForm" action="LISÄÄ_TÄHÄN_MAKE_WEBHOOK_URL" method="POST">
+        <div class="form-group"><label>Tunnus</label><input type="text" name="tunnus" id="tunnus" readonly style="background:#eee"></div>
+        <div class="form-group"><label>Nimi</label><input type="text" name="nimi" id="nimi"></div>
+        <div class="form-group"><label>Tuotemerkki</label><input type="text" name="tuotemerkki" id="tuotemerkki"></div>
+        <div class="form-group"><label>Kuvaus</label><textarea name="kuvaus" id="kuvaus" rows="3"></textarea></div>
+        <div class="form-group"><label>Hinta</label><input type="text" name="hinta" id="hinta"></div>
+        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2"></textarea></div>
+        <div class="form-group"><label>Kunto</label>
+            <select name="kunto" id="kunto">
+                <option value="Uusi">Uusi</option>
+                <option value="Erinomainen">Erinomainen</option>
+                <option value="Hyvä">Hyvä</option>
+                <option value="Tyydyttävä">Tyydyttävä</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Pääryhmä</label><input type="text" name="paaryhma" id="paaryhma"></div>
+        <div class="form-group"><label>Ryhmä</label><input type="text" name="ryhma" id="ryhma"></div>
         
-        <div class="kuva-galleria" id="kuvaGalleria"></div>
-        
-        <!-- Päivitetty Tally-osoite -->
-        <iframe id="tally-lomake" src="https://tally.so/embed/gDObyN?alignLeft=1&hideTitle=1&transparentBackground=1"></iframe>
-    </div>
+        <button type="submit">Lähetä vahvistus</button>
+    </form>
+</div>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const kuvaParam = urlParams.get('kuva');
-        
-        if (kuvaParam) {
-            const galleria = document.getElementById('kuvaGalleria');
-            const kuvat = kuvaParam.split(',').map(url => url.trim()).filter(url => url !== '');
-            
-            kuvat.forEach((url, index) => {
-                const laatikko = document.createElement('div');
-                laatikko.className = 'kuva-laatikko';
-                
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = `Tuotteen kuva ${index + 1}`;
-                img.onclick = () => window.open(url, '_blank');
-                
-                laatikko.appendChild(img);
-                galleria.appendChild(laatikko);
-            });
-            
-            if (kuvat.length > 2) {
-                galleria.style.justifyContent = 'flex-start';
-            }
-        }
-        
-        // Esitäytetään uusi Tally-lomake kaikilla URL-parametreilla
-        const iframe = document.getElementById('tally-lomake');
-        iframe.src = "https://tally.so/embed/gDObyN?alignLeft=1&hideTitle=1&transparentBackground=1&" + urlParams.toString();
-    </script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Täytetään kentät URL-parametreista
+    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
+    fields.forEach(f => {
+        if(urlParams.get(f)) document.getElementById(f).value = urlParams.get(f);
+    });
+
+    // Kuvat galleriaan
+    const kuvaParam = urlParams.get('kuva');
+    if (kuvaParam) {
+        const galleria = document.getElementById('kuvaGalleria');
+        kuvaParam.split(',').forEach(url => {
+            const div = document.createElement('div');
+            div.className = 'kuva-laatikko';
+            div.innerHTML = `<img src="${url.trim()}" onclick="window.open('${url.trim()}', '_blank')">`;
+            galleria.appendChild(div);
+        });
+    }
+</script>
 
 </body>
 </html>
