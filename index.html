@@ -15,7 +15,6 @@
         .readonly { background: #f3f4f6; color: #6b7280; }
         button { width: 100%; padding: 16px; background: #000; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         
-        /* Gallerian uudet, isommat koot */
         .kuva-galleria { display: flex; gap: 15px; overflow-x: auto; margin-bottom: 30px; padding-bottom: 10px; }
         .kuva-laatikko { flex: 0 0 220px; height: 220px; border-radius: 12px; overflow: hidden; background: #eee; cursor: pointer; border: 1px solid #ddd; }
         .kuva-laatikko img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -29,41 +28,50 @@
     
     <form id="vahvistusForm" action="LISÄÄ_TÄHÄN_MAKE_WEBHOOK_URL" method="POST">
         <input type="hidden" name="token" value="MinunSalainenAvain123">
+        
         <div class="form-group"><label>Tunnus</label><input type="text" name="tunnus" id="tunnus" readonly class="readonly"></div>
         <div class="form-group"><label>Nimi</label><input type="text" name="nimi" id="nimi"></div>
+        <div class="form-group"><label>Tuotemerkki</label><input type="text" name="tuotemerkki" id="tuotemerkki"></div>
+        <div class="form-group"><label>Kuvaus</label><textarea name="kuvaus" id="kuvaus" rows="2"></textarea></div>
         <div class="form-group"><label>Hinta (€)</label><input type="number" name="hinta" id="hinta" step="0.01"></div>
+        <div class="form-group"><label>Perustelu</label><textarea name="perustelu" id="perustelu" rows="2" readonly class="readonly"></textarea></div>
+        <div class="form-group"><label>Kunto</label><input type="text" name="kunto" id="kunto"></div>
+        <div class="form-group"><label>Pääryhmä</label><input type="text" name="paaryhma" id="paaryhma"></div>
+        <div class="form-group"><label>Ryhmä</label><input type="text" name="ryhma" id="ryhma"></div>
+        
         <button type="submit">Lähetä vahvistus</button>
     </form>
 </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
     const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
 
-    // Täytetään kentät
-    // Täytetään kentät URL-parametreilla
+    // Täytetään kentät siististi kerralla
     fields.forEach(f => {
-        if(urlParams.get(f)) document.getElementById(f).value = urlParams.get(f);
-        if(urlParams.get(f)) {
+        const val = urlParams.get(f);
+        if(val) {
             const el = document.getElementById(f);
-            if(f === 'hinta') {
-                el.value = parseFloat(urlParams.get(f)).toFixed(2);
-            } else {
-                el.value = urlParams.get(f);
+            if(el) {
+                if(f === 'hinta') {
+                    el.value = parseFloat(val).toFixed(2);
+                } else {
+                    el.value = val;
+                }
             }
         }
     });
 
-    // Korjattu kuvagalleria: Pakotettu target="_blank"
+    // Kuvagalleria
     const kuvaParam = urlParams.get('kuva');
     if (kuvaParam) {
         const galleria = document.getElementById('kuvaGalleria');
         kuvaParam.split(',').forEach(url => {
             const trimmedUrl = url.trim();
+            if(!trimmedUrl) return;
             const a = document.createElement('a');
             a.href = trimmedUrl;
-            a.target = "_blank"; // Avaa uuteen välilehteen
+            a.target = "_blank";
             a.innerHTML = `<div class="kuva-laatikko"><img src="${trimmedUrl}"></div>`;
             galleria.appendChild(a);
         });
@@ -72,6 +80,9 @@
     // Lähetys
     document.getElementById('vahvistusForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const btn = this.querySelector('button');
+        btn.innerText = "Lähetetään...";
+        
         fetch(this.action, { method: 'POST', body: new FormData(this) })
         .then(() => {
             document.querySelector('.container').innerHTML = `
