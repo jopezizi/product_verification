@@ -122,26 +122,16 @@
     document.querySelector('.container').appendChild(confirmationPanel);
 
     function sendToWebhook(formData) {
-        // Luodaan URL-osoite parametreineen
-        const params = new URLSearchParams();
+        const dataObj = {};
         for (const pair of formData.entries()) {
-            params.append(pair[0], pair[1]);
+            dataObj[pair[0]] = pair[1];
         }
-        
-        const fullUrl = webhookUrl + '?' + params.toString();
 
-        // sendBeacon on "fire and forget" -lähetys. 
-        // Se ei vaadi CORS- lupia samalla tavalla kuin fetch.
-        const success = navigator.sendBeacon(fullUrl);
-        
-        if (success) {
-            return Promise.resolve();
-        } else {
-            // Jos beacon ei toimi, yritetään perinteistä GET-pyyntöä (viimeinen oljenkorsi)
-            const img = new Image();
-            img.src = fullUrl;
-            return Promise.resolve();
-        }
+        return fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataObj)
+        });
     }
 
     // Store last submission data for final save
