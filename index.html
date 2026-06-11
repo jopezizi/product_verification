@@ -55,6 +55,7 @@
 </div>
 
     <script>
+    const webhookUrl = 'https://hook.eu1.make.com/4p9kp4pbd9k8rsrleukgcdvkbmlj386g';
     const urlParams = new URLSearchParams(window.location.search);
     const fields = ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'];
     // Populate fields from URL params and store original price
@@ -120,6 +121,14 @@
     confirmationPanel.style.marginTop = '20px';
     document.querySelector('.container').appendChild(confirmationPanel);
 
+    function sendToWebhook(body) {
+        return fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body,
+        });
+    }
+
     // Store last submission data for final save
     window.lastSubmission = null;
 
@@ -141,7 +150,7 @@
         new FormData(this).forEach((v,k) => dataObj[k] = v);
         window.lastSubmission = dataObj;
 
-        fetch(this.action, { method: 'POST', body: new FormData(this) })
+        sendToWebhook(new FormData(this))
         .then(() => {
             btn.disabled = false;
             btn.innerText = 'Tallenna';
@@ -167,7 +176,7 @@
                 if(window.lastSubmission) {
                     const params = new URLSearchParams();
                     for(const k in window.lastSubmission) params.append(k, window.lastSubmission[k]);
-                    fetch(form.action, { method: 'POST', body: params })
+                    sendToWebhook(params)
                     .catch(() => {})
                     .finally(() => { window.close(); });
                 } else {
