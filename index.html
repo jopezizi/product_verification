@@ -216,7 +216,7 @@
                     <option value="Hyvä">Hyvä</option>
                     <option value="Tyydyttävä">Tyydyttävä</option>
                 </select>
-                <div class="helper-text">Hinta muuttuu valitun kunnon perusteella</div>
+                <div class="helper-text">Hintaehdotus muuttuu valitun kunnon perusteella</div>
             </div>
 
             <div class="form-group">
@@ -308,14 +308,105 @@
             const manualPrice = parseFloat(hintaInput.value);
             if (!Number.isNaN(manualPrice)) {
                 const currentMultiplier = getConditionMultiplier(kuntoSelect.value);
-                // Päivitetään basePrice, jotta seuraavat kunnon vaihdot lasketaan tästä
                 basePrice = manualPrice / currentMultiplier;
             }
         });
 
-        // ... (loppuosa webhook-lähetyksestä ja confirm-panelista pysyy samana)
+        function populateGallery(kuvaParam) {
+            kuvaParam.split(',').forEach(url => {
+                const trimmedUrl = url.trim();
+                if (!trimmedUrl) return;
 
-        // Lisää loppuun:
+                const link = document.createElement('a');
+                link.href = trimmedUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+
+                const img = document.createElement('img');
+                img.src = trimmedUrl;
+                img.alt = 'Tuotekuva';
+
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.appendChild(img);
+
+                link.appendChild(item);
+                gallery.appendChild(link);
+            });
+        }
+
+        function sendToWebhook(formData) {
+            const dataObj = {};
+            for (const [key, value] of formData.entries()) {
+                dataObj[key] = value;
+            }
+
+            return fetch(CONFIG.webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataObj)
+            });
+        }
+
+        function showConfirmationPanel() {
+            form.style.display = 'none';
+            confirmationPanel.innerHTML = `
+                <div class="confirmation-icon">✅</div>
+                <h1>Tallennettu!</h1>
+                <div class="confirmation-buttons">
+                    <button id="confirmCloseBtn" class="btn-primary">Vahvista ja sulje</button>
+                    <button id="editBackBtn" class="btn-secondary">Palaa muokkaamaan</button>
+                </div>
+            `;
+            confirmationPanel.style.display = 'block';
+
+            document.getElementById('editBackBtn').addEventListener('click', hideConfirmationPanel);
+            document.getElementById('confirmCloseBtn').addEventListener('click', closeWindow);
+        }
+
+        function hideConfirmationPanel() {
+            confirmationPanel.style.display = 'none';
+            form.style.display = 'block';
+        }
+
+        function closeWindow() {
+            if (lastSubmission) {
+                const params = new URLSearchParams(lastSubmission);
+                sendToWebhook(params)
+                    .catch(() => {})
+                    .finally(() => window.close());
+            } else {
+                window.close();
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!kuntoSelect.value) {
+                alert('Valitse kunto ennen lähettämistä.');
+                kuntoSelect.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Tallennetaan...';
+
+            const formData = new FormData(form);
+            lastSubmission = Object.fromEntries(formData);
+
+            try {
+                await sendToWebhook(formData);
+                showConfirmationPanel();
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Virhe lähetyksessä. Tarkista yhteys ja yritä uudelleen.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Tallenna';
+            }
+        });
+
         populateFormFromUrl();
     </script>
 </body>
