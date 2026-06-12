@@ -451,14 +451,7 @@
         }
 
         function closeWindow() {
-            if (lastSubmission) {
-                const params = new URLSearchParams(lastSubmission);
-                sendToWebhook(params)
-                    .catch(() => {})
-                    .finally(() => window.close());
-            } else {
-                window.close();
-            }
+            window.close();
         }
 
         form.addEventListener('submit', async (e) => {
