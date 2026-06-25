@@ -23,465 +23,377 @@
             --gap-md: 15px;
             --gap-lg: 20px;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-family);
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: var(--bg-page);
-        }
-
-        .container {
-            background: var(--bg-white);
-            padding: 40px;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 0 0 25px 0;
-            color: var(--text-primary);
-        }
-
-        .helper-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: var(--gap-sm);
-            font-weight: 400;
-        }
-
-        .form-group {
-            margin-bottom: var(--gap-lg);
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: var(--gap-sm);
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-family: inherit;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        input.readonly, textarea.readonly {
-            background-color: var(--bg-light);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        .gallery {
-            display: flex;
-            gap: var(--gap-md);
-            overflow-x: auto;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-        }
-
-        .gallery-item {
-            flex: 0 0 220px;
-            height: 220px;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            background: var(--bg-light);
-            cursor: pointer;
-            border: 1px solid var(--border-light);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 16px;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-
-        button:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-
-        button:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--bg-white);
-            margin-top: 10px;
-        }
-
-        .btn-secondary {
-            background-color: var(--bg-white);
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .confirmation-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: var(--gap-md);
-            margin-top: 10px;
-        }
-
-        .confirmation-buttons button {
-            margin-top: 0;
-        }
-
-        .confirmation-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        #confirmationPanel {
-            text-align: center;
-        }
-
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox-content {
-            position: relative;
-            max-width: 90vw;
-            max-height: 90vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightbox-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 40px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            border: none;
-            background: none;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .lightbox-close:hover {
-            color: #ccc;
-        }
+        * { box-sizing: border-box; }
+        body { font-family: var(--font-family); max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: var(--bg-page); }
+        .container { background: var(--bg-white); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border-light); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { font-size: 24px; font-weight: 600; margin: 0 0 25px 0; color: var(--text-primary); }
+        .helper-text { font-size: 12px; color: var(--text-secondary); margin-top: var(--gap-sm); font-weight: 400; }
+        .form-group { margin-bottom: var(--gap-lg); }
+        label { display: block; font-weight: 600; margin-bottom: var(--gap-sm); font-size: 14px; color: var(--text-primary); }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 16px; font-family: inherit; transition: border-color 0.2s, background-color 0.2s; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary-color); }
+        input.readonly, textarea.readonly { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
+        select:disabled { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
+        .gallery { display: flex; gap: var(--gap-md); overflow-x: auto; margin-bottom: 30px; padding-bottom: 10px; }
+        .gallery-item { flex: 0 0 220px; height: 220px; border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-light); cursor: pointer; border: 1px solid var(--border-light); transition: transform 0.2s, box-shadow 0.2s; }
+        .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        button { width: 100%; padding: 16px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font-family: inherit; font-size: 16px; transition: opacity 0.2s, transform 0.1s; }
+        button:hover:not(:disabled) { opacity: 0.9; }
+        button:active:not(:disabled) { transform: scale(0.98); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary-color); color: var(--bg-white); margin-top: 10px; }
+        .btn-secondary { background-color: var(--bg-white); color: var(--primary-color); border: 1px solid var(--primary-color); }
+        .confirmation-buttons { display: flex; flex-direction: column; gap: var(--gap-md); margin-top: 10px; }
+        .confirmation-buttons button { margin-top: 0; }
+        .confirmation-icon { font-size: 48px; margin-bottom: 16px; }
+        #confirmationPanel { text-align: center; }
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .lightbox.active { display: flex; }
+        .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; }
+        .lightbox-image { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 40px; font-weight: bold; color: white; cursor: pointer; border: none; background: none; padding: 0; line-height: 1; }
+        .lightbox-close:hover { color: #ccc; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Tuotteen vahvistus</h1>
-        <div class="gallery" id="gallery"></div>
+<div class="container">
+    <h1>Tuotteen vahvistus</h1>
+    <div class="gallery" id="gallery"></div>
 
-        <form id="form">
-            <input type="hidden" name="token" value="MinunSalainenAvain123">
+    <form id="form">
+        <input type="hidden" name="token" value="MinunSalainenAvain123">
 
-            <div class="form-group">
-                <label for="tunnus">Tunnus</label>
-                <input type="text" id="tunnus" name="tunnus" readonly class="readonly">
-            </div>
-
-            <div class="form-group">
-                <label for="nimi">Nimi</label>
-                <input type="text" id="nimi" name="nimi">
-            </div>
-
-            <div class="form-group">
-                <label for="tuotemerkki">Tuotemerkki</label>
-                <input type="text" id="tuotemerkki" name="tuotemerkki">
-            </div>
-
-            <div class="form-group">
-                <label for="kuvaus">Kuvaus</label>
-                <textarea id="kuvaus" name="kuvaus" rows="5"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="kunto">Kunto</label>
-                <select id="kunto" name="kunto" required>
-                    <option value="">Valitse kunto...</option>
-                    <option value="Erinomainen">Erinomainen</option>
-                    <option value="Hyvä">Hyvä</option>
-                    <option value="Tyydyttävä">Tyydyttävä</option>
-                </select>
-                <div class="helper-text">Hintaehdotus muuttuu valitun kunnon perusteella</div>
-            </div>
-
-            <div class="form-group">
-                <label for="hinta">Hinta (€)</label>
-                <input type="number" id="hinta" name="hinta" step="0.01">
-            </div>
-
-            <div class="form-group">
-                <label for="perustelu">Perustelu</label>
-                <textarea id="perustelu" name="perustelu" rows="2" readonly class="readonly"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="paaryhma">Pääryhmä</label>
-                <input type="text" id="paaryhma" name="paaryhma">
-            </div>
-
-            <div class="form-group">
-                <label for="ryhma">Ryhmä</label>
-                <input type="text" id="ryhma" name="ryhma">
-            </div>
-
-            <button type="submit" class="btn-primary">Tallenna</button>
-        </form>
-
-        <div id="confirmationPanel"></div>
-    </div>
-
-    <div class="lightbox" id="lightbox">
-        <div class="lightbox-content">
-            <button class="lightbox-close" id="lightboxClose">&times;</button>
-            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+        <div class="form-group">
+            <label for="tunnus">Tunnus</label>
+            <input type="text" id="tunnus" name="tunnus" readonly class="readonly">
         </div>
+
+        <div class="form-group">
+            <label for="nimi">Nimi</label>
+            <input type="text" id="nimi" name="nimi">
+        </div>
+
+        <div class="form-group">
+            <label for="tuotemerkki">Tuotemerkki</label>
+            <input type="text" id="tuotemerkki" name="tuotemerkki">
+        </div>
+
+        <div class="form-group">
+            <label for="kuvaus">Kuvaus</label>
+            <textarea id="kuvaus" name="kuvaus" rows="5"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="kunto">Kunto</label>
+            <select id="kunto" name="kunto" required>
+                <option value="">Valitse kunto...</option>
+                <option value="Erinomainen">Erinomainen</option>
+                <option value="Hyvä">Hyvä</option>
+                <option value="Tyydyttävä">Tyydyttävä</option>
+            </select>
+            <div class="helper-text">Hintaehdotus muuttuu valitun kunnon perusteella</div>
+        </div>
+
+        <div class="form-group">
+            <label for="hinta">Hinta (€)</label>
+            <input type="number" id="hinta" name="hinta" step="0.01">
+        </div>
+
+        <div class="form-group">
+            <label for="perustelu">Perustelu</label>
+            <textarea id="perustelu" name="perustelu" rows="2" readonly class="readonly"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="paaryhma">Pääryhmä</label>
+            <select id="paaryhma" name="paaryhma">
+                <option value="">Valitse pääryhmä...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="ryhma">Tuoteryhmä</label>
+            <select id="ryhma" name="ryhma" disabled>
+                <option value="">Valitse ensin pääryhmä...</option>
+            </select>
+            <div class="helper-text">Kaikilla tuotteilla ei ole tuoteryhmää</div>
+        </div>
+
+        <button type="submit" class="btn-primary">Tallenna</button>
+    </form>
+
+    <div id="confirmationPanel"></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <img class="lightbox-image" id="lightboxImage" src="" alt="">
     </div>
+</div>
 
-    <script>
-        const CONFIG = {
-            webhookUrl: 'https://hook.eu1.make.com/asoke6dexf84uhjhear67bjhsj48m5r9',
-            formFields: ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'],
-            conditionMultipliers: {
-                'Erinomainen': 1.15,
-                'Hyvä': 1.00,
-                'Tyydyttävä': 0.75
-            }
-        };
+<script>
+const CONFIG = {
+    webhookUrl: 'https://hook.eu1.make.com/asoke6dexf84uhjhear67bjhsj48m5r9',
+    formFields: ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma'],
+    conditionMultipliers: { 'Erinomainen': 1.15, 'Hyvä': 1.00, 'Tyydyttävä': 0.75 }
+};
 
-        const form = document.getElementById('form');
-        const gallery = document.getElementById('gallery');
-        const confirmationPanel = document.getElementById('confirmationPanel');
-        const kuntoSelect = document.getElementById('kunto');
-        const hintaInput = document.getElementById('hinta');
-        const submitBtn = form.querySelector('button[type="submit"]');
+// Kategoriarakenne: pääryhmä -> tuoteryhmät (tyhjä array = ei tuoteryhmiä)
+const KATEGORIAT = {
+    "9101 Kaunokirjallisuus": ["9201 Romaanit ja novellit","9202 Jännitys ja dekkarit","9203 Fantasia ja scifi","9204 Runot ja näytelmät","9205 Nuorten kirjat"],
+    "9102 Tietokirjat": ["9206 Historia","9207 Luonto ja ympäristö","9208 Matkaoppaat ja sanakirjat","9209 Taide ja kulttuuri","9210 Hyvinvointi ja terveys","9211 Ruoka ja juoma","9212 Sisustus ja puutarha","9213 Talous ja yrittäjyys"],
+    "9103 Lastenkirjat": ["9214 Kuvakirjat","9215 Satukirjat","9216 Tietokirjat lapsille"],
+    "9104 Elämäkerrat ja muistelmat": [],
+    "9105 Harrastekirjat": ["9217 Käsityö ja askartelu","9218 Urheilu","9219 Musiikki ja elokuvat","9220 Valokuvaus"],
+    "9106 Sarjakuvat": [],
+    "9107 Lehdet": [],
+    "9108 Naisten vaatteet": ["9221 Paidat ja topit","9222 Takit ja jakut","9223 Housut ja farkut","9224 Mekot ja hameet","9225 Neuleet ja collegepaidat","9226 Yöasut","9227 Urheiluvaatteet","9228 Alusvaatteet"],
+    "9109 Miesten vaatteet": ["9229 Paidat ja topit","9230 Takit ja jakut","9231 Housut ja farkut","9232 Neuleet ja collegepaidat","9233 Alusvaatteet","9234 Urheiluvaatteet"],
+    "9110 Lastenvaatteet": ["9235 Vauvat (0-1v)","9236 Taaperot (1-3v)","9237 Leikki-ikäiset (3-7v)","9238 Koululaiset (7-14v)"],
+    "9111 Naisten kengät": ["9239 Arkikengät","9240 Juhlakengät","9241 Saappaat ja nilkkurit","9242 Urheilukengät","9243 Sandaalit"],
+    "9112 Miesten kengät": ["9244 Arkikengät","9245 Juhlakengät","9246 Saappaat","9247 Urheilukengät"],
+    "9113 Lasten kengät": [],
+    "9114 Laukut ja reput": ["9248 Käsilaukut","9249 Reput","9250 Matkalaukut","9251 Lompakot ja kukkarot"],
+    "9115 Korut": ["9252 Sormukset","9253 Korvakorut","9254 Rannekorut","9255 Kaulakorut","9256 Rintakorut"],
+    "9116 Kellot": [],
+    "9117 Huivit ja kaulaliinat": [],
+    "9118 Päähineet": ["9257 Hatut","9258 Pipot","9259 Lippikset"],
+    "9119 Käsineet": [],
+    "9120 Vyöt ja henkselit": [],
+    "9121 Solmiot ja kalvosinnapit": [],
+    "9122 Aurinkolasit": [],
+    "9123 Huonekalut": ["9260 Sohvat ja nojatuolit","9261 Tuolit ja penkit","9262 Pöydät","9263 Hyllyt ja lipastot","9264 Sängyt ja patjat","9265 Säilytyskalusteet"],
+    "9124 Sisustus": ["9266 Koriste-esineet","9267 Maljakot ja ruukut","9268 Kynttilät ja kynttilänjalat","9269 Taulut ja julisteet","9270 Peilit","9271 Kellot ja seinäkellot"],
+    "9125 Matot ja tekstiilit": ["9272 Matot","9273 Verhot","9274 Liinavaatteet","9275 Pöytäliinat","9276 Tyynyt ja peitot","9277 Pyyhkeet"],
+    "9126 Valaisimet": ["9278 Kattovalaisimet","9279 Seinävalaisimet","9280 Lattiavalaisimet","9281 Pöytävalaisimet","9282 Ulkovalaisimet"],
+    "9127 Astiat": ["9283 Lautaset ja kulhot","9284 Mukit ja kahvikupit","9285 Juomalasit","9286 Tarjoiluastiat","9287 Säilytysastiat","9288 Pannut ja kattilat","9289 Aterimet","9290 Leivontatarvikkeet"],
+    "9128 Säilytysratkaisut": ["9291 Korit ja rasiat","9292 Järjestelytarvikkeet","9293 Naulakot ja telineet"],
+    "9129 Toimistotarvikkeet": [],
+    "9130 Suuret kodinkoneet": ["9294 Jääkaapit ja pakastimet","9295 Pyykinpesukoneet","9296 Astianpesukoneet","9297 Uunit ja liedet","9298 Liesituulettimet"],
+    "9131 Pienkodinkoneet": ["9299 Kahvinkeittimet","9300 Leivänpaahtimet","9301 Tehosekoittimet","9302 Mikroaaltouunit","9303 Muut pienkodinkoneet"],
+    "9132 Kodinkoneiden varaosat": [],
+    "9133 Viihde-elektroniikka": ["9304 Televisiot","9305 Äänentoisto ja Hi-Fi","9306 Kamerat ja videokamerat","9307 Kuulokkeet","9308 DVD- ja Blu-ray-soittimet"],
+    "9134 Tietokoneet": ["9309 Kannettavat","9310 Pöytäkoneet","9311 Tabletit","9312 Oheislaitteet","9313 Osat ja komponentit"],
+    "9135 Puhelimet": ["9314 Matkapuhelimet","9315 Älylaitteet","9316 Tarvikkeet"],
+    "9136 Pelit ja konsolit": ["9317 Pelikonsolit","9318 Videopelit","9319 Retropelaaminen"],
+    "9137 Musiikki": ["9320 LP-levyt","9321 CD-levyt","9322 Kasetit","9323 Nuotit"],
+    "9138 Elokuvat": ["9324 DVD","9325 Blu-ray","9326 VHS"],
+    "9139 Soittimet": ["9327 Kitarat","9328 Pianot ja koskettimet","9329 Puhaltimet","9330 Lyömäsoittimet","9331 Muut soittimet"],
+    "9140 Musiikkitarvikkeet": ["9332 Vahvistimet ja efektit","9333 Muut musiikkitarvikkeet"],
+    "9141 Lautapelit ja palapelit": [],
+    "9142 Korttipelit ja keräilykortit": [],
+    "9143 Leikkifiguurit ja hahmot": [],
+    "9144 Pyöräily": ["9334 Varaosat","9335 Tarvikkeet","9336 Varusteet"],
+    "9145 Talviurheilu": ["9337 Sukset","9338 Luistimet","9339 Lumilaudat","9340 Talvivarusteet"],
+    "9146 Retkeilyvarusteet": ["9341 Reput","9342 Teltat","9343 Nukkumisvarusteet"],
+    "9147 Palloilulajit": ["9344 Jalkapallo","9345 Tennis","9346 Koripallo","9347 Muut palloilulajit"],
+    "9148 Vesiliikunta": ["9348 Uinti","9349 Melonta","9350 Muu vesiliikunta"],
+    "9149 Kuntoilu": ["9351 Kuntosalilaitteet","9352 Joogavälineet","9353 Muut kuntoilutarvikkeet"],
+    "9150 Lajitarvikkeet": ["9354 Golf","9355 Ratsastus","9356 Tanssi","9357 Kamppailulajit"],
+    "9151 Puutarhatyökalut": [],
+    "9152 Puutarhakalusteet": [],
+    "9153 Grillit ja ulkoruokailu": [],
+    "9154 Rakennustarvikkeet": [],
+    "9155 Kankaat ja ompelu": ["9358 Kankaat","9359 Lanka ja neuleet","9360 Ompelutarvikkeet"],
+    "9156 Askartelu": ["9361 Paperitarvikkeet","9362 Maalit ja värit","9363 Koristeet"],
+    "9157 Tuunattavat tuotteet": [],
+    "9158 Lelut": ["9364 Pehmo- ja sisälelut","9365 Ulkolelut","9366 Rakennussarjat","9367 Ajoneuvot ja radio-ohjattavat"],
+    "9159 Lastentarvikkeet": ["9368 Turvaistuimet","9369 Rattaat","9370 Syöttötuolit","9371 Vauvatarvikkeet"],
+    "9160 Koirat": [],
+    "9161 Kissat": [],
+    "9162 Muut lemmikit": [],
+    "9163 Sisätarvikkeet": [],
+    "9164 Ulkotarvikkeet": [],
+    "9165 Renkaat ja vanteet": [],
+    "9166 Varaosat": [],
+    "9167 Naistenpyörät": [],
+    "9168 Miestenpyörät": [],
+    "9169 Lastenpyörät": [],
+    "9170 Erikoispyörät": [],
+    "9171 Löydöt ja aarteet": [],
+    "9172 Designtuotteet": [],
+    "9173 Keräilyesineet": ["9372 Posliini ja keramiikka","9373 Lasitavara","9374 Antiikki","9375 Muu keräily"],
+    "9174 Elävä tuote kierrätysmateriaaleista": [],
+    "9175 Upcycled-design": []
+};
 
-        let basePrice = null; // Geminin antama hinta (kunto: Hyvä)
-        let lastSubmission = null;
+// Täytä pääryhmä-dropdown
+const paaryhmaSelect = document.getElementById('paaryhma');
+const ryhmaSelect = document.getElementById('ryhma');
 
-        function getConditionMultiplier(condition) {
-            return CONFIG.conditionMultipliers[condition] ?? 1.00;
-        }
+Object.keys(KATEGORIAT).forEach(pr => {
+    const opt = document.createElement('option');
+    opt.value = pr;
+    opt.textContent = pr;
+    paaryhmaSelect.appendChild(opt);
+});
 
-        function formatPrice(value) {
-            return (Math.round(value * 2) / 2).toFixed(2);
-        }
-
-        function populateFormFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-
-            CONFIG.formFields.forEach(fieldName => {
-                const value = urlParams.get(fieldName);
-                if (!value) return;
-
-                const element = document.getElementById(fieldName);
-                if (!element) return;
-
-                if (fieldName === 'hinta') {
-                    const price = parseFloat(value) || 0;
-                    element.value = price.toFixed(2);
-                    basePrice = price; // Tallennetaan alkuperäinen hinta pohjaksi
-                } else {
-                    element.value = value;
-                }
-            });
-
-            const kuvaParam = urlParams.get('kuva');
-            if (kuvaParam) populateGallery(kuvaParam);
-        }
-
-        // --- TÄMÄ LOGIIKKA VARMISTAA, ETTÄ HINTA PÄIVITTYY OIKEIN ---
-        kuntoSelect.addEventListener('change', (e) => {
-            if (basePrice === null) basePrice = parseFloat(hintaInput.value) || 0;
-            const multiplier = getConditionMultiplier(e.target.value);
-            hintaInput.value = formatPrice(basePrice * multiplier);
+// Päivitä tuoteryhmä-dropdown kun pääryhmä muuttuu
+paaryhmaSelect.addEventListener('change', () => {
+    const val = paaryhmaSelect.value;
+    ryhmaSelect.innerHTML = '';
+    if (!val) {
+        ryhmaSelect.innerHTML = '<option value="">Valitse ensin pääryhmä...</option>';
+        ryhmaSelect.disabled = true;
+        return;
+    }
+    const tuoteryhmat = KATEGORIAT[val] || [];
+    if (tuoteryhmat.length === 0) {
+        ryhmaSelect.innerHTML = '<option value="">Ei tuoteryhmiä</option>';
+        ryhmaSelect.disabled = true;
+    } else {
+        ryhmaSelect.disabled = false;
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Valitse tuoteryhmä...';
+        ryhmaSelect.appendChild(defaultOpt);
+        tuoteryhmat.forEach(tr => {
+            const opt = document.createElement('option');
+            opt.value = tr;
+            opt.textContent = tr;
+            ryhmaSelect.appendChild(opt);
         });
+    }
+});
 
-        hintaInput.addEventListener('input', () => {
-            const manualPrice = parseFloat(hintaInput.value);
-            if (!Number.isNaN(manualPrice)) {
-                const currentMultiplier = getConditionMultiplier(kuntoSelect.value);
-                basePrice = manualPrice / currentMultiplier;
-            }
-        });
+// URL-parametreista täyttö
+const form = document.getElementById('form');
+const gallery = document.getElementById('gallery');
+const confirmationPanel = document.getElementById('confirmationPanel');
+const kuntoSelect = document.getElementById('kunto');
+const hintaInput = document.getElementById('hinta');
+const submitBtn = form.querySelector('button[type="submit"]');
 
-        function populateGallery(kuvaParam) {
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImage = document.getElementById('lightboxImage');
-            const lightboxClose = document.getElementById('lightboxClose');
+let basePrice = null;
 
-            kuvaParam.split(',').forEach(url => {
-                const trimmedUrl = url.trim();
-                if (!trimmedUrl) return;
+function getConditionMultiplier(condition) {
+    return CONFIG.conditionMultipliers[condition] ?? 1.00;
+}
 
-                const img = document.createElement('img');
-                img.src = trimmedUrl;
-                img.alt = 'Tuotekuva';
+function formatPrice(value) {
+    return (Math.round(value * 2) / 2).toFixed(2);
+}
 
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.style.cursor = 'pointer';
-                item.appendChild(img);
+function populateFormFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
 
-                // Open lightbox on click
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    lightboxImage.src = trimmedUrl;
-                    lightbox.classList.add('active');
-                });
+    CONFIG.formFields.forEach(fieldName => {
+        const value = urlParams.get(fieldName);
+        if (!value) return;
+        const element = document.getElementById(fieldName);
+        if (!element) return;
 
-                gallery.appendChild(item);
-            });
-
-            // Close lightbox
-            lightboxClose.addEventListener('click', () => {
-                lightbox.classList.remove('active');
-            });
-
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightbox) {
-                    lightbox.classList.remove('active');
-                }
-            });
-
-            // Close with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                    lightbox.classList.remove('active');
-                }
-            });
+        if (fieldName === 'hinta') {
+            const price = parseFloat(value) || 0;
+            element.value = price.toFixed(2);
+            basePrice = price;
+        } else if (fieldName === 'paaryhma') {
+            // Aseta pääryhmä ja triggeroi change
+            element.value = value;
+            element.dispatchEvent(new Event('change'));
+        } else if (fieldName === 'ryhma') {
+            // Asetetaan tuoteryhmä pienen viiveen jälkeen jotta pääryhmä ehtii ensin
+            setTimeout(() => { element.value = value; }, 50);
+        } else {
+            element.value = value;
         }
+    });
 
-        function sendToWebhook(formData) {
-            const dataObj = {};
-            for (const [key, value] of formData.entries()) {
-                dataObj[key] = value;
-            }
+    const kuvaParam = urlParams.get('kuva');
+    if (kuvaParam) populateGallery(kuvaParam);
+}
 
-            return fetch(CONFIG.webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataObj)
-            });
-        }
+kuntoSelect.addEventListener('change', (e) => {
+    if (basePrice === null) basePrice = parseFloat(hintaInput.value) || 0;
+    const multiplier = getConditionMultiplier(e.target.value);
+    hintaInput.value = formatPrice(basePrice * multiplier);
+});
 
-        function showConfirmationPanel() {
-            form.style.display = 'none';
-            confirmationPanel.innerHTML = `
-                <div class="confirmation-icon">✅</div>
-                <h1>Tallennettu!</h1>
-                <div class="confirmation-buttons">
-                    <button id="confirmCloseBtn" class="btn-primary">Vahvista ja sulje</button>
-                    <button id="editBackBtn" class="btn-secondary">Palaa muokkaamaan</button>
-                </div>
-            `;
-            confirmationPanel.style.display = 'block';
+hintaInput.addEventListener('input', () => {
+    const manualPrice = parseFloat(hintaInput.value);
+    if (!Number.isNaN(manualPrice)) {
+        const currentMultiplier = getConditionMultiplier(kuntoSelect.value);
+        basePrice = manualPrice / currentMultiplier;
+    }
+});
 
-            document.getElementById('editBackBtn').addEventListener('click', hideConfirmationPanel);
-            document.getElementById('confirmCloseBtn').addEventListener('click', closeWindow);
-        }
+function populateGallery(kuvaParam) {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxClose = document.getElementById('lightboxClose');
 
-        function hideConfirmationPanel() {
-            confirmationPanel.style.display = 'none';
-            form.style.display = 'block';
-        }
-
-        function closeWindow() {
-            window.close();
-        }
-
-        form.addEventListener('submit', async (e) => {
+    kuvaParam.split(',').forEach(url => {
+        const trimmedUrl = url.trim();
+        if (!trimmedUrl) return;
+        const img = document.createElement('img');
+        img.src = trimmedUrl;
+        img.alt = 'Tuotekuva';
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.appendChild(img);
+        item.addEventListener('click', (e) => {
             e.preventDefault();
-
-            if (!kuntoSelect.value) {
-                alert('Valitse kunto ennen lähettämistä.');
-                kuntoSelect.focus();
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Tallennetaan...';
-
-            const formData = new FormData(form);
-            lastSubmission = Object.fromEntries(formData);
-
-            try {
-                await sendToWebhook(formData);
-                showConfirmationPanel();
-            } catch (error) {
-                console.error('Submission error:', error);
-                alert('Virhe lähetyksessä. Tarkista yhteys ja yritä uudelleen.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Tallenna';
-            }
+            lightboxImage.src = trimmedUrl;
+            lightbox.classList.add('active');
         });
+        gallery.appendChild(item);
+    });
 
-        populateFormFromUrl();
-    </script>
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
+}
+
+function sendToWebhook(formData) {
+    const dataObj = {};
+    for (const [key, value] of formData.entries()) { dataObj[key] = value; }
+    return fetch(CONFIG.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataObj)
+    });
+}
+
+function showConfirmationPanel() {
+    form.style.display = 'none';
+    confirmationPanel.innerHTML = `
+        <div class="confirmation-icon">✅</div>
+        <h1>Tallennettu!</h1>
+        <div class="confirmation-buttons">
+            <button id="confirmCloseBtn" class="btn-primary">Vahvista ja sulje</button>
+            <button id="editBackBtn" class="btn-secondary">Palaa muokkaamaan</button>
+        </div>`;
+    confirmationPanel.style.display = 'block';
+    document.getElementById('editBackBtn').addEventListener('click', hideConfirmationPanel);
+    document.getElementById('confirmCloseBtn').addEventListener('click', () => window.close());
+}
+
+function hideConfirmationPanel() {
+    confirmationPanel.style.display = 'none';
+    form.style.display = 'block';
+}
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!kuntoSelect.value) { alert('Valitse kunto ennen lähettämistä.'); kuntoSelect.focus(); return; }
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Tallennetaan...';
+    const formData = new FormData(form);
+    try {
+        await sendToWebhook(formData);
+        showConfirmationPanel();
+    } catch (error) {
+        console.error('Submission error:', error);
+        alert('Virhe lähetyksessä. Tarkista yhteys ja yritä uudelleen.');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Tallenna';
+    }
+});
+
+populateFormFromUrl();
+</script>
 </body>
 </html>
