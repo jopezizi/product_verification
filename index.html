@@ -327,15 +327,22 @@ function populateGallery(kuvaParam) {
     kuvaParam.split(',').forEach(url => {
         const trimmedUrl = url.trim();
         if (!trimmedUrl) return;
+
+        // 🌟 CACHE BUSTER: Pakotetaan selain hakemaan aina tuore kuva lisäämällä dynaaminen aikaleima
+        const cleanUrl = trimmedUrl.split('?')[0]; // Puhdistetaan vanhat urliin leivotut parametrit jos niitä on
+        const cacheBuster = `?cb=${Date.now()}&download=1`;
+
         const img = document.createElement('img');
-        img.src = trimmedUrl;
+        img.src = cleanUrl + cacheBuster;
         img.alt = 'Tuotekuva';
+        
         const item = document.createElement('div');
         item.className = 'gallery-item';
         item.appendChild(img);
+        
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            lightboxImage.src = trimmedUrl;
+            lightboxImage.src = cleanUrl + cacheBuster; // Päivitetään tuore linkki myös lightboxiin
             lightbox.classList.add('active');
         });
         gallery.appendChild(item);
