@@ -34,10 +34,103 @@
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary-color); }
         input.readonly, textarea.readonly { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
         select:disabled { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
-        .gallery { display: flex; gap: var(--gap-md); overflow-x: auto; margin-bottom: 30px; padding-bottom: 10px; }
-        .gallery-item { flex: 0 0 220px; height: 220px; border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-light); cursor: pointer; border: 1px solid var(--border-light); transition: transform 0.2s, box-shadow 0.2s; }
-        .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        /* 🌟 UUDISTETTU KUVAGALLERIA (GRID) */
+        .gallery { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: var(--gap-md); 
+            margin-bottom: 30px; 
+            padding: 15px;
+            background: #f9fafb;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            min-height: 120px;
+        }
+        .gallery-item { 
+            position: relative;
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            border-radius: var(--radius-lg); 
+            overflow: hidden; 
+            background: var(--bg-light); 
+            cursor: grab; 
+            border: 1px solid var(--border-light); 
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s; 
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+        .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .gallery-item.dragging { opacity: 0.4; cursor: grabbing; border: 2px solid var(--primary-color); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        
+        /* Ohitetaan yleiset painiketyylit gallerian pikkunapeille */
+        .gallery-item button {
+            width: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: inherit;
+            font-weight: bold !important;
+            line-height: 1 !important;
+        }
+        .gallery-item button:active { transform: none !important; }
+
+        /* Selkeä punainen poistonappi (X) */
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px !important;
+            height: 28px !important;
+            background: #ef4444 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 50% !important;
+            font-size: 16px !important;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .gallery-item .delete-btn:hover { background: #dc2626 !important; }
+
+        /* Alapalkki siirtonapeille ja numerolle */
+        .gallery-item .controls-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            font-size: 11px;
+            z-index: 10;
+        }
+        /* Selkeät siirtonapit (◀ ▶) */
+        .gallery-item .nav-btn {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #fff !important;
+            border: none !important;
+            padding: 3px 8px !important;
+            border-radius: 4px !important;
+            cursor: pointer;
+            font-size: 11px !important;
+            transition: background 0.2s;
+        }
+        .gallery-item .nav-btn:hover { background: rgba(255, 255, 255, 0.45) !important; }
+        .gallery-item .badge { font-weight: 600; letter-spacing: 0.5px; }
+
+        /* Ensimmäisen kuvan / Pääkuvan korostusvihreä */
+        .gallery-item.main-image { border: 2px solid #10b981; }
+        .gallery-item.main-image .controls-bar { background: rgba(16, 185, 129, 0.95); }
+
+        /* Lomakkeen painikkeet */
         button { width: 100%; padding: 16px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font-family: inherit; font-size: 16px; transition: opacity 0.2s, transform 0.1s; }
         button:hover:not(:disabled) { opacity: 0.9; }
         button:active:not(:disabled) { transform: scale(0.98); }
@@ -59,10 +152,12 @@
 <body>
 <div class="container">
     <h1>Tuotteen vahvistus</h1>
+    
     <div class="gallery" id="gallery"></div>
 
     <form id="form">
         <input type="hidden" name="token" value="MinunSalainenAvain123">
+        <input type="hidden" id="kuva" name="kuva">
 
         <div class="form-group">
             <label for="tunnus">Tunnus</label>
@@ -140,7 +235,6 @@ const CONFIG = {
     conditionMultipliers: { 'Erinomainen': 1.15, 'Hyvä': 1.00, 'Tyydyttävä': 0.75 }
 };
 
-// Kategoriarakenne: pääryhmä -> tuoteryhmät (tyhjä array = ei tuoteryhmiä)
 const KATEGORIAT = {
     "9101 Kaunokirjallisuus": ["9201 Romaanit ja novellit","9202 Jännitys ja dekkarit","9203 Fantasia ja scifi","9204 Runot ja näytelmät","9205 Nuorten kirjat"],
     "9102 Tietokirjat": ["9206 Historia","9207 Luonto ja ympäristö","9208 Matkaoppaat ja sanakirjat","9209 Taide ja kulttuuri","9210 Hyvinvointi ja terveys","9211 Ruoka ja juoma","9212 Sisustus ja puutarha","9213 Talous ja yrittäjyys"],
@@ -258,7 +352,6 @@ paaryhmaSelect.addEventListener('change', () => {
     }
 });
 
-// URL-parametreista täyttö
 const form = document.getElementById('form');
 const gallery = document.getElementById('gallery');
 const confirmationPanel = document.getElementById('confirmationPanel');
@@ -290,11 +383,9 @@ function populateFormFromUrl() {
             element.value = price.toFixed(2);
             basePrice = price;
         } else if (fieldName === 'paaryhma') {
-            // Aseta pääryhmä ja triggeroi change
             element.value = value;
             element.dispatchEvent(new Event('change'));
         } else if (fieldName === 'ryhma') {
-            // Asetetaan tuoteryhmä pienen viiveen jälkeen jotta pääryhmä ehtii ensin
             setTimeout(() => { element.value = value; }, 50);
         } else {
             element.value = value;
@@ -319,35 +410,139 @@ hintaInput.addEventListener('input', () => {
     }
 });
 
+// =======================================================
+// 🌟 UUDET FUNKTIOT JÄRJESTELYÄ JA POISTOA VARTEN
+// =======================================================
+
+function paivitaNumerointi() {
+    const items = document.querySelectorAll('.gallery-item');
+    items.forEach((item, index) => {
+        const badge = item.querySelector('.badge');
+        if (index === 0) {
+            item.classList.add('main-image');
+            if (badge) badge.textContent = '1. Pääkuva';
+        } else {
+            item.classList.remove('main-image');
+            if (badge) badge.textContent = `${index + 1}. kuva`;
+        }
+    });
+}
+
+function haeLopullisetKuvatStr() {
+    const items = document.querySelectorAll('.gallery-item');
+    const urls = [];
+    items.forEach(item => {
+        if (item.dataset.url) urls.push(item.dataset.url);
+    });
+    return urls.join(', ');
+}
+
+function lisaaDragEvents(item) {
+    item.addEventListener('dragstart', () => item.classList.add('dragging'));
+    item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        paivitaNumerointi();
+    });
+
+    item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const draggingItem = document.querySelector('.gallery-item.dragging');
+        if (!draggingItem || draggingItem === item) return;
+
+        const rect = item.getBoundingClientRect();
+        const boxCenter = rect.left + rect.width / 2;
+        
+        if (e.clientX > boxCenter) {
+            gallery.insertBefore(draggingItem, item.nextSibling);
+        } else {
+            gallery.insertBefore(draggingItem, item);
+        }
+    });
+}
+
+// 🌟 DYNAMISOITU POPULATE GALLERY NUOLINAPEILLA JA RAHAUKSELLA
 function populateGallery(kuvaParam) {
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightboxImage');
     const lightboxClose = document.getElementById('lightboxClose');
 
-    kuvaParam.split(',').forEach(url => {
-        const trimmedUrl = url.trim();
-        if (!trimmedUrl) return;
+    gallery.innerHTML = ''; // Tyhjennetään vanhat
 
-        // 🌟 CACHE BUSTER: Pakotetaan selain hakemaan aina tuore kuva lisäämällä dynaaminen aikaleima
-        const cleanUrl = trimmedUrl.split('?')[0]; // Puhdistetaan vanhat urliin leivotut parametrit jos niitä on
+    const kuvatArray = kuvaParam.split(',').map(url => url.trim()).filter(url => url !== "");
+    
+    if (kuvatArray.length === 0) {
+        gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">Ei kuvia.</div>';
+        return;
+    }
+
+    kuvatArray.forEach(url => {
+        const cleanUrl = url.split('?')[0]; 
         const cacheBuster = `?cb=${Date.now()}&download=1`;
+        const finalExcelUrl = cleanUrl + "?download=1"; // Alkuperäinen puhdas linkki Exceliin ilman cb-aikaleimaa
 
-        const img = document.createElement('img');
-        img.src = cleanUrl + cacheBuster;
-        img.alt = 'Tuotekuva';
-        
         const item = document.createElement('div');
         item.className = 'gallery-item';
-        item.appendChild(img);
-        
+        item.setAttribute('draggable', 'true');
+        item.dataset.url = finalExcelUrl;
+
+        // Luodaan kortin sisältö: Kuva, poistonappi ja siirtonapit alapalkissa
+        item.innerHTML = `
+            <button type="button" class="delete-btn" title="Poista kuva">&times;</button>
+            <img src="${cleanUrl + cacheBuster}" alt="Tuotekuva">
+            <div class="controls-bar">
+                <button type="button" class="nav-btn move-left" title="Siirrä vasemmalle">◀</button>
+                <span class="badge"></span>
+                <button type="button" class="nav-btn move-right" title="Siirrä oikealle">▶</button>
+            </div>
+        `;
+
+        // Lightbox avautuu vain jos klikataan kuva-aluetta (ei nappeja)
         item.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
             e.preventDefault();
-            lightboxImage.src = cleanUrl + cacheBuster; // Päivitetään tuore linkki myös lightboxiin
+            lightboxImage.src = cleanUrl + cacheBuster;
             lightbox.classList.add('active');
         });
+
+        // Poistonapin toiminto
+        item.querySelector('.delete-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            item.remove();
+            paivitaNumerointi();
+            if (document.querySelectorAll('.gallery-item').length === 0) {
+                gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">Ei kuvia.</div>';
+            }
+        });
+
+        // Nuoli vasemmalle (Siirrä eteenpäin järjestyksessä)
+        item.querySelector('.move-left').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const prev = item.previousElementSibling;
+            if (prev && prev.classList.contains('gallery-item')) {
+                gallery.insertBefore(item, prev);
+                paivitaNumerointi();
+            }
+        });
+
+        // Nuoli oikealle (Siirrä taaksepäin järjestyksessä)
+        item.querySelector('.move-right').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const next = item.nextElementSibling;
+            if (next && next.classList.contains('gallery-item')) {
+                gallery.insertBefore(next, item);
+                paivitaNumerointi();
+            }
+        });
+
+        // Aktivoidaan HTML5 Drag & Drop tälle kortille
+        lisaaDragEvents(item);
+
         gallery.appendChild(item);
     });
 
+    paivitaNumerointi();
+
+    // Lightbox sulkemiset
     lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
@@ -382,11 +577,16 @@ function hideConfirmationPanel() {
     form.style.display = 'block';
 }
 
+// Lomakkeen lähetys
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!kuntoSelect.value) { alert('Valitse kunto ennen lähettämistä.'); kuntoSelect.focus(); return; }
     submitBtn.disabled = true;
     submitBtn.innerText = 'Tallennetaan...';
+    
+    // 🌟 PÄIVITETÄÄN KUVAT-PIILOKENTTÄ ENNEN LÄHETYSTÄ, JOTTA MAKE SAA DATAN
+    document.getElementById('kuva').value = haeLopullisetKuvatStr();
+    
     const formData = new FormData(form);
     try {
         await sendToWebhook(formData);
