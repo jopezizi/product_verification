@@ -477,7 +477,7 @@ function populateGallery(kuvaParam) {
 
     kuvatArray.forEach(url => {
         const cleanUrl = url.split('?')[0]; 
-        const cacheBuster = `?cb=${Date.now()}&download=1`;
+        const cacheBuster = '';
         const finalExcelUrl = cleanUrl + "?download=1"; // Alkuperäinen puhdas linkki Exceliin ilman cb-aikaleimaa
 
         const item = document.createElement('div');
@@ -523,7 +523,10 @@ function populateGallery(kuvaParam) {
                 paivitaNumerointi();
             }
         });
-
+        item.querySelector('img').addEventListener('error', function() {
+            this.onerror = null; // estää loopin
+            this.src = ''; // tai placeholder-kuva
+        }, { once: true });
         // Nuoli oikealle (Siirrä taaksepäin järjestyksessä)
         item.querySelector('.move-right').addEventListener('click', (e) => {
             e.stopPropagation();
