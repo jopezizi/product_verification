@@ -35,7 +35,7 @@
         input.readonly, textarea.readonly { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
         select:disabled { background-color: var(--bg-light); color: var(--text-secondary); cursor: not-allowed; }
         
-        /* 🌟 UUDISTETTU KUVAGALLERIA (GRID) */
+        /* 🌟 KUVAGALLERIA (GRID) */
         .gallery { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
@@ -218,7 +218,7 @@
         <button type="submit" class="btn-primary">Tallenna</button>
     </form>
 
-    <div id="confirmationPanel"></div>
+    <div id="confirmationPanel" style="display: none;"></div>
 </div>
 
 <div class="lightbox" id="lightbox">
@@ -359,7 +359,16 @@ const kuntoSelect = document.getElementById('kunto');
 const hintaInput = document.getElementById('hinta');
 const submitBtn = form.querySelector('button[type="submit"]');
 
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+const lightboxClose = document.getElementById('lightboxClose');
+
 let basePrice = null;
+
+// Lightbox sulkutoiminnot
+lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
 
 function getConditionMultiplier(condition) {
     return CONFIG.conditionMultipliers[condition] ?? 1.00;
@@ -367,6 +376,16 @@ function getConditionMultiplier(condition) {
 
 function formatPrice(value) {
     return (Math.round(value * 2) / 2).toFixed(2);
+}
+
+// 🌟 Apufunktio SharePoint- ja muiden kuvalinkkien korjaamiseen
+function getDirectImageUrl(rawUrl) {
+    if (!rawUrl) return '';
+    let clean = rawUrl.trim();
+    if (clean.includes('sharepoint.com') && !clean.includes('download=1')) {
+        clean += (clean.includes('?') ? '&' : '?') + 'download=1';
+    }
+    return clean;
 }
 
 function populateFormFromUrl() {
@@ -411,7 +430,7 @@ hintaInput.addEventListener('input', () => {
 });
 
 // =======================================================
-// 🌟 UUDET FUNKTIOT JÄRJESTELYÄ JA POISTOA VARTEN
+// JÄRJESTELY JA POISTO
 // =======================================================
 
 function paivitaNumerointi() {
@@ -460,13 +479,9 @@ function lisaaDragEvents(item) {
     });
 }
 
-// 🌟 DYNAMISOITU POPULATE GALLERY NUOLINAPEILLA JA RAHAUKSELLA
+// 🌟 POPULATE GALLERY (KORJATTU SHAREPOINT-YHTEENSOPIVAKSI)
 function populateGallery(kuvaParam) {
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImage = document.getElementById('lightboxImage');
-    const lightboxClose = document.getElementById('lightboxClose');
-
-    gallery.innerHTML = ''; // Tyhjennetään vanhat
+    gallery.innerHTML = '';
 
     const kuvatArray = kuvaParam.split(',').map(url => url.trim()).filter(url => url !== "");
     
@@ -476,19 +491,16 @@ function populateGallery(kuvaParam) {
     }
 
     kuvatArray.forEach(url => {
-        const cleanUrl = url.split('?')[0]; 
-        const cacheBuster = '';
-        const finalExcelUrl = cleanUrl + "?download=1"; // Alkuperäinen puhdas linkki Exceliin ilman cb-aikaleimaa
+        const imageUrl = getDirectImageUrl(url);
 
         const item = document.createElement('div');
         item.className = 'gallery-item';
         item.setAttribute('draggable', 'true');
-        item.dataset.url = finalExcelUrl;
+        item.dataset.url = imageUrl;
 
-        // Luodaan kortin sisältö: Kuva, poistonappi ja siirtonapit alapalkissa
         item.innerHTML = `
             <button type="button" class="delete-btn" title="Poista kuva">&times;</button>
-            <img src="${cleanUrl + cacheBuster}" alt="Tuotekuva">
+            <img src="${imageUrl}" alt="Tuotekuva">
             <div class="controls-bar">
                 <button type="button" class="nav-btn move-left" title="Siirrä vasemmalle">◀</button>
                 <span class="badge"></span>
@@ -496,15 +508,25 @@ function populateGallery(kuvaParam) {
             </div>
         `;
 
-        // Lightbox avautuu vain jos klikataan kuva-aluetta (ei nappeja)
+        // Kuvan latausvirheiden käsittely
+        const imgEl = item.querySelector('img');
+        imgEl.addEventListener('error', function() {
+            this.onerror = null;
+            this.alt = 'Kuvan lataus epäonnistui';
+            this.style.padding = '10px';
+            this.style.fontSize = '12px';
+            this.style.color = '#ef4444';
+        }, { once: true });
+
+        // Lightbox
         item.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
             e.preventDefault();
-            lightboxImage.src = cleanUrl + cacheBuster;
+            lightboxImage.src = imageUrl;
             lightbox.classList.add('active');
         });
 
-        // Poistonapin toiminto
+        // Poistonappi
         item.querySelector('.delete-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             item.remove();
@@ -514,7 +536,7 @@ function populateGallery(kuvaParam) {
             }
         });
 
-        // Nuoli vasemmalle (Siirrä eteenpäin järjestyksessä)
+        // Nuoli vasemmalle
         item.querySelector('.move-left').addEventListener('click', (e) => {
             e.stopPropagation();
             const prev = item.previousElementSibling;
@@ -523,11 +545,8 @@ function populateGallery(kuvaParam) {
                 paivitaNumerointi();
             }
         });
-        item.querySelector('img').addEventListener('error', function() {
-            this.onerror = null; // estää loopin
-            this.src = ''; // tai placeholder-kuva
-        }, { once: true });
-        // Nuoli oikealle (Siirrä taaksepäin järjestyksessä)
+
+        // Nuoli oikealle
         item.querySelector('.move-right').addEventListener('click', (e) => {
             e.stopPropagation();
             const next = item.nextElementSibling;
@@ -537,18 +556,11 @@ function populateGallery(kuvaParam) {
             }
         });
 
-        // Aktivoidaan HTML5 Drag & Drop tälle kortille
         lisaaDragEvents(item);
-
         gallery.appendChild(item);
     });
 
     paivitaNumerointi();
-
-    // Lightbox sulkemiset
-    lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
-    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
 }
 
 function sendToWebhook(formData) {
@@ -587,7 +599,6 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
     submitBtn.innerText = 'Tallennetaan...';
     
-    // 🌟 PÄIVITETÄÄN KUVAT-PIILOKENTTÄ ENNEN LÄHETYSTÄ, JOTTA MAKE SAA DATAN
     document.getElementById('kuva').value = haeLopullisetKuvatStr();
     
     const formData = new FormData(form);
