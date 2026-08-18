@@ -486,6 +486,8 @@ function attachImageRetry(imgEl, item, originalUrl) {
         item.classList.remove('loading');
         const err = item.querySelector('.load-error');
         if (err) err.remove();
+        const spinner = item.querySelector('.spinner');
+        if (spinner) spinner.remove();
     });
 
     imgEl.addEventListener('error', () => {
