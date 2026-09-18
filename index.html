@@ -116,7 +116,6 @@
             font-weight: 600 !important;
         }
         
-        /* Ohitetaan yleiset painiketyylit gallerian pikkunapeille */
         .gallery-item button {
             width: auto !important;
             padding: 0 !important;
@@ -163,7 +162,6 @@
             font-size: 11px;
             z-index: 10;
         }
-        /* Selkeät siirtonapit (◀ ▶) */
         .gallery-item .nav-btn {
             background: rgba(255, 255, 255, 0.2) !important;
             color: #fff !important;
@@ -177,11 +175,9 @@
         .gallery-item .nav-btn:hover { background: rgba(255, 255, 255, 0.45) !important; }
         .gallery-item .badge { font-weight: 600; letter-spacing: 0.5px; }
 
-        /* Ensimmäisen kuvan / Pääkuvan korostus */
         .gallery-item.main-image { border: 2px solid var(--vihrea); }
         .gallery-item.main-image .controls-bar { background: rgba(0, 119, 74, 0.92); }
 
-        /* Lomakkeen painikkeet */
         button { width: 100%; padding: 16px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font-family: inherit; font-size: 16px; transition: opacity 0.2s, transform 0.1s; }
         button:hover:not(:disabled) { opacity: 0.9; }
         button:active:not(:disabled) { transform: scale(0.98); }
@@ -290,8 +286,8 @@ const CONFIG = {
     formFields: ['tunnus', 'nimi', 'tuotemerkki', 'kuvaus', 'hinta', 'perustelu', 'kunto', 'paaryhma', 'ryhma', 'hyllypaikka'],
     conditionMultipliers: { 'Erinomainen': 1.15, 'Hyvä': 1.00, 'Tyydyttävä': 0.75 },
     imageRetry: {
-    maxAttempts: 9,
-    delaysMs: [800, 1500, 2500, 4000, 5000, 6000, 6000, 6000, 6000]
+        maxAttempts: 9,
+        delaysMs: [800, 1500, 2500, 4000, 5000, 6000, 6000, 6000, 6000]
     }
 };
 
@@ -438,7 +434,6 @@ function formatPrice(value) {
     return Math.round(value).toString();
 }
 
-// 🌟 Apufunktio SharePoint- ja muiden kuvalinkkien korjaamiseen
 function getDirectImageUrl(rawUrl) {
     if (!rawUrl) return '';
     let clean = rawUrl.trim();
@@ -448,16 +443,11 @@ function getDirectImageUrl(rawUrl) {
     return clean;
 }
 
-// 🌟 Lisää cache-buster-parametri ilman että alkuperäinen (tallennettava) URL muuttuu
 function withCacheBuster(url) {
     const sep = url.includes('?') ? '&' : '?';
     return `${url}${sep}_cb=${Date.now()}`;
 }
 
-// 🌟 Kuvan lataus uudelleenyrityksin — kuva näkyy varmemmin vaikka ensimmäinen
-// yritys epäonnistuisi (esim. SharePoint/OneDrive-linkin hidas valmistuminen).
-// dataset.url (tallennettava, lopullinen kuvan osoite) pysyy koskemattomana —
-// vain img.src saa cache-buster-lisäyksen latausyrityksiä varten.
 function attachImageRetry(imgEl, item, originalUrl) {
     let attempts = 0;
     const { maxAttempts, delaysMs } = CONFIG.imageRetry;
@@ -545,10 +535,19 @@ hintaInput.addEventListener('input', () => {
 });
 
 // =======================================================
-// JÄRJESTELY JA POISTO
+// JÄRJESTELY JA POISTO (PÄIVITETTY KUVAKENTTÄ REAALIAJASSA)
 // =======================================================
 
-function paivitaNumerointi() {
+function haeLopullisetKuvatStr() {
+    const items = document.querySelectorAll('.gallery-item');
+    const urls = [];
+    items.forEach(item => {
+        if (item.dataset.url) urls.push(item.dataset.url);
+    });
+    return urls.join(', ');
+}
+
+function paivitaNumerointiJaKuvakentta() {
     const items = document.querySelectorAll('.gallery-item');
     items.forEach((item, index) => {
         const badge = item.querySelector('.badge');
@@ -560,27 +559,16 @@ function paivitaNumerointi() {
             if (badge) badge.textContent = `${index + 1}. kuva`;
         }
     });
-}
 
-// Kerää lopulliset kuva-URLit DOM-järjestyksessä. Koska poisto tekee
-// item.remove() ja järjestely (raahaus + nuolet) tekee insertBefore()-kutsuja
-// suoraan samaan .gallery-item-listaan, tämä funktio heijastaa AINA sitä mitä
-// käyttäjä näkee ruudulla — poistetut kuvat eivät ole enää DOM:issa ollenkaan,
-// ja järjestys vastaa aina viimeisintä siirtoa.
-function haeLopullisetKuvatStr() {
-    const items = document.querySelectorAll('.gallery-item');
-    const urls = [];
-    items.forEach(item => {
-        if (item.dataset.url) urls.push(item.dataset.url);
-    });
-    return urls.join(', ');
+    // Päivitetään heti piilokenttään ajantasainen kuvalista
+    document.getElementById('kuva').value = haeLopullisetKuvatStr();
 }
 
 function lisaaDragEvents(item) {
     item.addEventListener('dragstart', () => item.classList.add('dragging'));
     item.addEventListener('dragend', () => {
         item.classList.remove('dragging');
-        paivitaNumerointi();
+        paivitaNumerointiJaKuvakentta();
     });
 
     item.addEventListener('dragover', (e) => {
@@ -599,7 +587,6 @@ function lisaaDragEvents(item) {
     });
 }
 
-// 🌟 POPULATE GALLERY (KORJATTU SHAREPOINT-YHTEENSOPIVAKSI + UUDELLEENYRITYS)
 function populateGallery(kuvaParam) {
     gallery.innerHTML = '';
 
@@ -607,6 +594,7 @@ function populateGallery(kuvaParam) {
     
     if (kuvatArray.length === 0) {
         gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">Ei kuvia.</div>';
+        document.getElementById('kuva').value = '';
         return;
     }
 
@@ -632,7 +620,6 @@ function populateGallery(kuvaParam) {
         const imgEl = item.querySelector('img');
         attachImageRetry(imgEl, item, imageUrl);
 
-        // Lightbox (käyttää alkuperäistä, lopullista URLia — ei cache-bustattua)
         item.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
             e.preventDefault();
@@ -644,7 +631,7 @@ function populateGallery(kuvaParam) {
         item.querySelector('.delete-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             item.remove();
-            paivitaNumerointi();
+            paivitaNumerointiJaKuvakentta();
             if (document.querySelectorAll('.gallery-item').length === 0) {
                 gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">Ei kuvia.</div>';
             }
@@ -656,7 +643,7 @@ function populateGallery(kuvaParam) {
             const prev = item.previousElementSibling;
             if (prev && prev.classList.contains('gallery-item')) {
                 gallery.insertBefore(item, prev);
-                paivitaNumerointi();
+                paivitaNumerointiJaKuvakentta();
             }
         });
 
@@ -666,7 +653,7 @@ function populateGallery(kuvaParam) {
             const next = item.nextElementSibling;
             if (next && next.classList.contains('gallery-item')) {
                 gallery.insertBefore(next, item);
-                paivitaNumerointi();
+                paivitaNumerointiJaKuvakentta();
             }
         });
 
@@ -674,12 +661,24 @@ function populateGallery(kuvaParam) {
         gallery.appendChild(item);
     });
 
-    paivitaNumerointi();
+    paivitaNumerointiJaKuvakentta();
 }
 
-function sendToWebhook(formData) {
+// 🌟 RAJAAN WEBHOOK-LÄHETYS OMAAN JSON-OLIOON
+function sendToWebhook() {
     const dataObj = {};
-    for (const [key, value] of formData.entries()) { dataObj[key] = value; }
+    
+    // Kerätään kaikki lomakkeen elementit
+    const elements = form.querySelectorAll('input, textarea, select');
+    elements.forEach(el => {
+        if (el.name) {
+            dataObj[el.name] = el.value;
+        }
+    });
+
+    // Pakotetaan 'kuva'-kenttä vastaamaan täsmälleen sen hetkistä gallerian tilaa
+    dataObj['kuva'] = haeLopullisetKuvatStr();
+
     return fetch(CONFIG.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -713,11 +712,8 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
     submitBtn.innerText = 'Tallennetaan...';
     
-    document.getElementById('kuva').value = haeLopullisetKuvatStr();
-    
-    const formData = new FormData(form);
     try {
-        await sendToWebhook(formData);
+        await sendToWebhook();
         showConfirmationPanel();
     } catch (error) {
         console.error('Submission error:', error);
