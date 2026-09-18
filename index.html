@@ -369,7 +369,6 @@ const KATEGORIAT = {
     "9175 Upcycled-design": []
 };
 
-// Täytä pääryhmä-dropdown
 const paaryhmaSelect = document.getElementById('paaryhma');
 const ryhmaSelect = document.getElementById('ryhma');
 
@@ -380,7 +379,6 @@ Object.keys(KATEGORIAT).forEach(pr => {
     paaryhmaSelect.appendChild(opt);
 });
 
-// Päivitä tuoteryhmä-dropdown kun pääryhmä muuttuu
 paaryhmaSelect.addEventListener('change', () => {
     const val = paaryhmaSelect.value;
     ryhmaSelect.innerHTML = '';
@@ -421,7 +419,6 @@ const lightboxClose = document.getElementById('lightboxClose');
 
 let basePrice = null;
 
-// Lightbox sulkutoiminnot
 lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
 lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
@@ -535,20 +532,24 @@ hintaInput.addEventListener('input', () => {
 });
 
 // =======================================================
-// JÄRJESTELY JA POISTO (PÄIVITETTY KUVAKENTTÄ REAALIAJASSA)
+// JÄRJESTELY JA POISTO (KORJATTU URL-LUKU DYNAMISESTI)
 // =======================================================
 
 function haeLopullisetKuvatStr() {
-    const items = document.querySelectorAll('.gallery-item');
+    // Luetaan URL:it AINOASTAAN fyysisesti galleriassa olevista elementeistä
+    const items = gallery.querySelectorAll('.gallery-item');
     const urls = [];
     items.forEach(item => {
-        if (item.dataset.url) urls.push(item.dataset.url);
+        const rawUrl = item.getAttribute('data-raw-url');
+        if (rawUrl) {
+            urls.push(rawUrl);
+        }
     });
     return urls.join(', ');
 }
 
 function paivitaNumerointiJaKuvakentta() {
-    const items = document.querySelectorAll('.gallery-item');
+    const items = gallery.querySelectorAll('.gallery-item');
     items.forEach((item, index) => {
         const badge = item.querySelector('.badge');
         if (index === 0) {
@@ -560,8 +561,8 @@ function paivitaNumerointiJaKuvakentta() {
         }
     });
 
-    // Päivitetään heti piilokenttään ajantasainen kuvalista
-    document.getElementById('kuva').value = haeLopullisetKuvatStr();
+    const lopulliset = haeLopullisetKuvatStr();
+    document.getElementById('kuva').value = lopulliset;
 }
 
 function lisaaDragEvents(item) {
@@ -573,7 +574,7 @@ function lisaaDragEvents(item) {
 
     item.addEventListener('dragover', (e) => {
         e.preventDefault();
-        const draggingItem = document.querySelector('.gallery-item.dragging');
+        const draggingItem = gallery.querySelector('.gallery-item.dragging');
         if (!draggingItem || draggingItem === item) return;
 
         const rect = item.getBoundingClientRect();
@@ -604,7 +605,8 @@ function populateGallery(kuvaParam) {
         const item = document.createElement('div');
         item.className = 'gallery-item loading';
         item.setAttribute('draggable', 'true');
-        item.dataset.url = imageUrl;
+        // TÄRKEÄ: Tallennetaan alkuperäinen puhdas osoite attribuuttiin
+        item.setAttribute('data-raw-url', imageUrl);
 
         item.innerHTML = `
             <div class="spinner"></div>
@@ -627,12 +629,12 @@ function populateGallery(kuvaParam) {
             lightbox.classList.add('active');
         });
 
-        // Poistonappi
+        // Poistonappi (Poistaa elementin ja päivittää listan)
         item.querySelector('.delete-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             item.remove();
             paivitaNumerointiJaKuvakentta();
-            if (document.querySelectorAll('.gallery-item').length === 0) {
+            if (gallery.querySelectorAll('.gallery-item').length === 0) {
                 gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">Ei kuvia.</div>';
             }
         });
@@ -664,11 +666,10 @@ function populateGallery(kuvaParam) {
     paivitaNumerointiJaKuvakentta();
 }
 
-// 🌟 RAJAAN WEBHOOK-LÄHETYS OMAAN JSON-OLIOON
 function sendToWebhook() {
     const dataObj = {};
     
-    // Kerätään kaikki lomakkeen elementit
+    // Kerätään kaikki lomakkeen inputit
     const elements = form.querySelectorAll('input, textarea, select');
     elements.forEach(el => {
         if (el.name) {
@@ -676,7 +677,7 @@ function sendToWebhook() {
         }
     });
 
-    // Pakotetaan 'kuva'-kenttä vastaamaan täsmälleen sen hetkistä gallerian tilaa
+    // Pakotetaan 'kuva'-kenttään vain ne URL:it jotka ovat ruudulla
     dataObj['kuva'] = haeLopullisetKuvatStr();
 
     return fetch(CONFIG.webhookUrl, {
@@ -705,7 +706,6 @@ function hideConfirmationPanel() {
     form.style.display = 'block';
 }
 
-// Lomakkeen lähetys
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!kuntoSelect.value) { alert('Valitse kunto ennen lähettämistä.'); kuntoSelect.focus(); return; }
